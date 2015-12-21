@@ -47,11 +47,11 @@ class TodoViewer
   # Load the file into memory, and put
   # the first part on the curses display.
   def load_file(filename)
-    fp = open(filename, "r") do |fp|
-    # slurp the file
-    fp.each_line { |l|
-      @data_lines.push(l.chop)
-    }
+    open(filename, "r") do |fp|
+      # slurp the file
+      fp.each_line { |l|
+        @data_lines.push(l.chop)
+      }
     end
     @top = 0
     @data_lines[0..@screen.maxy-1].each_with_index{|line, idx|
@@ -75,6 +75,21 @@ class TodoViewer
     win.refresh
     win.getch
     win.close
+  end
+
+  # Redraw the list display
+  def redraw_list
+    str = @data_lines[@top]
+    if( str )
+      @screen.clear
+      @data_lines[0..@screen.maxy-1].each_with_index{|line, idx|
+        @screen.setpos(idx, 0)
+        @screen.addstr(line)
+      }
+      @screen.setpos(0,0)
+      @screen.refresh
+    end
+    return true
   end
 
   # Scroll the display up by one line
@@ -119,10 +134,9 @@ class TodoViewer
       result = true
       c = Curses.getch
       case c
-      when Curses::KEY_UP, Curses::KEY_CTRL_P, ?m
+      when ?m
         show_message("oko")
-        @screen.clear
-        result = true
+        result = redraw_list
       when Curses::KEY_DOWN, Curses::KEY_CTRL_N, ?j
         result = scroll_down
       when Curses::KEY_UP, Curses::KEY_CTRL_P, ?k
