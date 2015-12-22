@@ -131,6 +131,37 @@ class TodoViewer
     my_form_win.wrefresh();
 
     stdscr.refresh();
+
+    # Capture typing...
+    while((ch = my_form_win.getch()) != KEY_F1)
+      case ch
+      # when KEY_DOWN
+      # when KEY_UP
+      when KEY_LEFT
+        # Go to previous field
+        my_form.form_driver(REQ_PREV_CHAR);
+      when KEY_RIGHT
+        # Go to previous field
+        my_form.form_driver(REQ_NEXT_CHAR);
+      when KEY_BACKSPACE
+        my_form.form_driver(REQ_DEL_PREV);
+      else
+        # If this is a normal character, it gets Printed
+        my_form.form_driver(ch);
+      end
+    end
+
+    # Print results
+    redraw_list
+    my_form.form_driver REQ_NEXT_FIELD # Request next to set 0 buffer in field
+    @screen.mvprintw(0, 0, Ncurses::Form.field_buffer(field, 0))
+
+    # Clean up
+    my_form.unpost_form
+    my_form.free_form
+
+    field.free_field
+    # fields.each {|f| f.free_field()}
   end
 
   # Allow the user to interact with the display.
@@ -182,7 +213,12 @@ class TodoViewer
         Ncurses.beep
       end
     end
-    Ncurses.close_screen
+
+    # put the screen back in its normal state
+    Ncurses.echo()
+    Ncurses.nocbreak()
+    Ncurses.nl()
+    Ncurses.endwin()
   end
 end
 
