@@ -1,6 +1,3 @@
-include Ncurses
-include Ncurses::Form
-
 # A curses based todo.txt file viewer
 class TodoViewer
 
@@ -101,7 +98,6 @@ class TodoViewer
 
     # Create the window to be associated with the form
     my_form_win = WINDOW.new(rows[0] + 3, cols[0] + 14, 1, 1);
-    my_form_win.bkgd(Ncurses.COLOR_PAIR(3));
     my_form_win.keypad(TRUE);
 
     # Set main window and sub window
@@ -116,29 +112,11 @@ class TodoViewer
 
     stdscr.refresh();
 
-    # Capture typing...
-    while((ch = my_form_win.getch()) != KEY_F1)
-      case ch
-      # when KEY_DOWN
-      # when KEY_UP
-      when KEY_LEFT
-        # Go to previous field
-        my_form.form_driver(REQ_PREV_CHAR);
-      when KEY_RIGHT
-        # Go to previous field
-        my_form.form_driver(REQ_NEXT_CHAR);
-      when KEY_BACKSPACE
-        my_form.form_driver(REQ_DEL_PREV);
-      else
-        # If this is a normal character, it gets Printed
-        my_form.form_driver(ch);
-      end
-    end
+    new_item_text = capture_text_field_input my_form_win, my_form, field
 
     # Print results
     redraw_list
-    my_form.form_driver REQ_NEXT_FIELD # Request next to set 0 buffer in field
-    @screen.mvprintw(0, 0, Ncurses::Form.field_buffer(field, 0))
+    @screen.mvprintw(0, 0, new_item_text)
 
     # Clean up
     my_form.unpost_form
@@ -203,5 +181,31 @@ class TodoViewer
     Ncurses.nocbreak()
     Ncurses.nl()
     Ncurses.endwin()
+  end
+
+  private
+
+  # Captures text input into a form.
+  # @param window [Window] the form window
+  # @param form [FORM] the form to be captured
+  # @param field [FIELD] the form to be captured
+  # @return [String] the captured input
+  def capture_text_field_input(window, form, field)
+    # Capture typing...
+    while((ch = window.getch()) != 13) # return is ascii 13
+      case ch
+      when KEY_LEFT
+        form.form_driver(REQ_PREV_CHAR);
+      when KEY_RIGHT
+        form.form_driver(REQ_NEXT_CHAR);
+      when KEY_BACKSPACE
+        form.form_driver(REQ_DEL_PREV);
+      else
+        # If this is a normal character, it gets Printed
+        form.form_driver(ch);
+      end
+    end
+    form.form_driver REQ_NEXT_FIELD # Request next to set 0 buffer in field
+    Ncurses::Form.field_buffer(field, 0)
   end
 end
