@@ -5,7 +5,7 @@ require 'todo-txt'
 require 'ncursesw'
 
 begin # XXX: Remove this begin/rescue before distributing your app
-require 'todo'
+  require 'todo'
 rescue LoadError
   STDERR.puts "In development, you need to use `bundle exec bin/todo` to run your app"
   STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
@@ -15,6 +15,7 @@ end
 
 include GLI::App
 include Ncurses
+include Ncurses::Form
 
 # A curses based todo.txt file viewer
 class TodoViewer
@@ -33,12 +34,10 @@ class TodoViewer
   def init_curses
     # signal(SIGINT, finish)
 
-    Ncurses.initscr
+    @screen = Ncurses.initscr
     Ncurses.nonl
     Ncurses.cbreak
     Ncurses.noecho
-
-    @screen = Ncurses.stdscr
 
     @screen.scrollok(true)
     #$screen.keypad(true)
@@ -58,22 +57,8 @@ class TodoViewer
       @screen.mvprintw(idx, 0, line)
     }
     @screen.refresh
-  # rescue
-  #   raise "cannot open file '#{filename}' for reading"
-  end
-
-  # Draws a window with a text message. Any character closes it.
-  def show_message(message)
-    width = message.length + 6
-    win = Window.new(5, width,
-                     (lines - 5) / 2, (cols - width) / 2)
-    win.box('|', '-')
-    win.mvprintw(2, 3, message)
-    win.refresh
-    a = win.getstr
-    win.close
-    redraw_list
-    @screen.addstr(a)
+    # rescue
+    #   raise "cannot open file '#{filename}' for reading"
   end
 
   # Redraw the list display
@@ -118,6 +103,36 @@ class TodoViewer
     end
   end
 
+  def new_item
+    field = FIELD.new(1, 10, 2, 1, 0, 0)
+    field.set_field_back(A_UNDERLINE)
+    fields = [field]
+    my_form = FORM.new(fields);
+    my_form.user_object = "My identifier"
+
+    # Calculate the area required for the form
+    rows = Array.new()
+    cols = Array.new()
+    my_form.scale_form(rows, cols);
+
+    # Create the window to be associated with the form
+    my_form_win = WINDOW.new(rows[0] + 3, cols[0] + 14, 1, 1);
+    my_form_win.bkgd(Ncurses.COLOR_PAIR(3));
+    my_form_win.keypad(TRUE);
+
+    # Set main window and sub window
+    my_form.set_form_win(my_form_win);
+    my_form.set_form_sub(my_form_win.derwin(rows[0], cols[0], 2, 12));
+
+    my_form.post_form();
+
+    # Print field types
+    my_form_win.mvaddstr(4, 2, "No Type")
+    my_form_win.wrefresh();
+
+    stdscr.refresh();
+  end
+
   # Allow the user to interact with the display.
   # This uses EMACS-like keybindings, and also
   # vi-like keybindings as well, except that left
@@ -128,8 +143,8 @@ class TodoViewer
       result = true
       c = Ncurses.getch
       case c
-      when 'm'.ord
-        show_message("oko")
+      when 'n'.ord
+        new_item
       when 'j'.ord
         result = scroll_down
       when 'k'.ord
@@ -177,17 +192,6 @@ version "0.0.1"
 
 subcommand_option_handling :normal
 arguments :strict
-
-def show_message(message)
-  width = message.length + 6
-  win = Window.new(5, width,
-                   (lines - 5) / 2, (cols - width) / 2)
-  win.box('|', '-')
-  win.mvprintw(2, 3, message)
-  win.refresh
-  win.getch
-  win.close
-end
 
 desc 'Starts an interactive editor for the given todo.txt list.'
 arg_name 'Describe arguments to list here'
