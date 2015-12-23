@@ -3,9 +3,10 @@ class TodoViewer
 
   # Create a new fileviewer, and view the file.
   def initialize(filename)
-    @data_lines = []
+    @list = []
     @screen = nil
     @top = nil
+    @cursor = nil
     init_curses
     load_file(filename)
     interact
@@ -24,31 +25,23 @@ class TodoViewer
     #$screen.keypad(true)
   end
 
-  # Load the file into memory, and put
-  # the first part on the curses display.
+  # Loads the given file as a todo.txt array. Sets the view to the top
+  # and redraws the list view.
+  # @param filename [String] path to the text file to be loaded
   def load_file(filename)
-    @data_lines = Todo::List.new filename
-    # open(filename, "r") do |fp|
-    #   # slurp the file
-    #   fp.each_line { |l|
-    #     @data_lines.push(l.chop)
-    #   }
-    # end
+    @list = Todo::List.new filename
     @top = 0
-    @data_lines[0..@screen.getmaxy-1].each_with_index{|line, idx|
-      @screen.mvprintw(idx, 0, line.to_s)
-    }
-    @screen.refresh
-    # rescue
-    #   raise "cannot open file '#{filename}' for reading"
+    @cursor = 0
+    redraw_list
   end
 
   # Redraw the list display
   def redraw_list
-    str = @data_lines[@top]
-    if( str )
+    str = @list[@top]
+    if(str)
       @screen.clear
-      @data_lines[@top..@screen.getmaxy-1+@top].each_with_index{|line, idx|
+      @list.sort!
+      @list[@top..@screen.getmaxy-1+@top].each_with_index { |line, idx|
         @screen.mvprintw(idx, 0, line.to_s)
       }
       @screen.refresh
@@ -60,7 +53,7 @@ class TodoViewer
     if( @top > 0 )
       @screen.scrl(-1)
       @top -= 1
-      str = @data_lines[@top].to_s
+      str = @list[@top].to_s
       if( str )
         @screen.mvprintw(0, 0, str)
       end
@@ -72,10 +65,10 @@ class TodoViewer
 
   # Scroll the display down by one line
   def scroll_down
-    if( @top + @screen.getmaxy < @data_lines.length )
+    if( @top + @screen.getmaxy < @list.length )
       @screen.scrl(1)
       @top += 1
-      str = @data_lines[@top + @screen.getmaxy - 1].to_s
+      str = @list[@top + @screen.getmaxy - 1].to_s
       if( str )
         @screen.mvprintw(@screen.getmaxy - 1, 0, str)
       end
@@ -119,7 +112,7 @@ class TodoViewer
 
     # Save results
     redraw_list
-    save_new_item(new_item_text, @data_lines)
+    save_new_item(new_item_text, @list)
     @screen.mvprintw(0, 0, new_item_text)
 
     # Clean up
