@@ -115,10 +115,11 @@ class TodoViewer
 
     stdscr.refresh();
 
-    new_item_text = capture_text_field_input my_form_win, my_form, field
+    new_item_text = capture_text_field_input(my_form_win, my_form, field)
 
-    # Print results
+    # Save results
     redraw_list
+    save_new_item(new_item_text, @data_lines)
     @screen.mvprintw(0, 0, new_item_text)
 
     # Clean up
@@ -127,6 +128,16 @@ class TodoViewer
 
     field.free_field
     # fields.each {|f| f.free_field()}
+  end
+
+  # Adds a new item to the list and saves the file
+  # @param task [String] the task to be added
+  # @param list [Todo::List] the task to be added
+  # @return [Todo::List] the updated list
+  def save_new_item(task, list)
+    list << Todo::Task.new(task)
+    File.open(list.path, 'w') { |file| file << list.join("\n") }
+    list
   end
 
   # Allow the user to interact with the display.
