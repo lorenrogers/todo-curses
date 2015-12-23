@@ -27,15 +27,16 @@ class TodoViewer
   # Load the file into memory, and put
   # the first part on the curses display.
   def load_file(filename)
-    open(filename, "r") do |fp|
-      # slurp the file
-      fp.each_line { |l|
-        @data_lines.push(l.chop)
-      }
-    end
+    @data_lines = Todo::List.new filename
+    # open(filename, "r") do |fp|
+    #   # slurp the file
+    #   fp.each_line { |l|
+    #     @data_lines.push(l.chop)
+    #   }
+    # end
     @top = 0
     @data_lines[0..@screen.getmaxy-1].each_with_index{|line, idx|
-      @screen.mvprintw(idx, 0, line)
+      @screen.mvprintw(idx, 0, line.to_s)
     }
     @screen.refresh
     # rescue
@@ -48,7 +49,7 @@ class TodoViewer
     if( str )
       @screen.clear
       @data_lines[@top..@screen.getmaxy-1+@top].each_with_index{|line, idx|
-        @screen.mvprintw(idx, 0, line)
+        @screen.mvprintw(idx, 0, line.to_s)
       }
       @screen.refresh
     end
@@ -59,7 +60,7 @@ class TodoViewer
     if( @top > 0 )
       @screen.scrl(-1)
       @top -= 1
-      str = @data_lines[@top]
+      str = @data_lines[@top].to_s
       if( str )
         @screen.mvprintw(0, 0, str)
       end
@@ -74,7 +75,7 @@ class TodoViewer
     if( @top + @screen.getmaxy < @data_lines.length )
       @screen.scrl(1)
       @top += 1
-      str = @data_lines[@top + @screen.getmaxy - 1]
+      str = @data_lines[@top + @screen.getmaxy - 1].to_s
       if( str )
         @screen.mvprintw(@screen.getmaxy - 1, 0, str)
       end
