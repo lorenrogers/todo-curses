@@ -3,10 +3,6 @@ class TodoViewer
 
   # Create a new fileviewer, and view the file.
   def initialize(filename)
-    @list = []
-    @screen = nil
-    @top = nil
-    @cursor = nil
     init_curses
     load_file(filename)
     interact
@@ -29,53 +25,62 @@ class TodoViewer
   # and redraws the list view.
   # @param filename [String] path to the text file to be loaded
   def load_file(filename)
-    @list = Todo::List.new filename
-    @top = 0
-    @cursor = 0
-    redraw_list
+    list = Todo::List.new filename
+    list.sort!
+    items = []
+    list.each do |item|
+      items << Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
+    end
+    @menu = Ncurses::Menu::MENU.new items
+    @menu.post_menu
+    @screen.refresh
   end
 
   # Redraw the list display
-  def redraw_list
-    str = @list[@top]
-    if(str)
-      @screen.clear
-      @list.sort!
-      @list[@top..@screen.getmaxy-1+@top].each_with_index { |line, idx|
-        @screen.mvprintw(idx, 0, line.to_s)
-      }
-      @screen.refresh
-    end
+  # @param list [Todo::List] the list of items to be rendered
+  # @param menu [Ncurses::Menu::MENU] the menu to be rendered to
+  def redraw_list(list, menu)
+    # str = @list[@top]
+    # if(str)
+    #   @screen.clear
+    #   @list.sort!
+    #   @list[@top..@screen.getmaxy-1+@top].each_with_index { |line, idx|
+    #     @screen.mvprintw(idx, 0, line.to_s)
+    #   }
+    #   @screen.refresh
+    # end
   end
 
   # Scroll the display up by one line
   def scroll_up
-    if( @top > 0 )
-      @screen.scrl(-1)
-      @top -= 1
-      str = @list[@top].to_s
-      if( str )
-        @screen.mvprintw(0, 0, str)
-      end
-      return true
-    else
-      return false
-    end
+    @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM)
+    # if( @top > 0 )
+    #   @screen.scrl(-1)
+    #   @top -= 1
+    #   str = @list[@top].to_s
+    #   if( str )
+    #     @screen.mvprintw(0, 0, str)
+    #   end
+    #   return true
+    # else
+    #   return false
+    # end
   end
 
   # Scroll the display down by one line
   def scroll_down
-    if( @top + @screen.getmaxy < @list.length )
-      @screen.scrl(1)
-      @top += 1
-      str = @list[@top + @screen.getmaxy - 1].to_s
-      if( str )
-        @screen.mvprintw(@screen.getmaxy - 1, 0, str)
-      end
-      return true
-    else
-      return false
-    end
+    @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
+    # if( @top + @screen.getmaxy < @list.length )
+    #   @screen.scrl(1)
+    #   @top += 1
+    #   str = @list[@top + @screen.getmaxy - 1].to_s
+    #   if( str )
+    #     @screen.mvprintw(@screen.getmaxy - 1, 0, str)
+    #   end
+    #   return true
+    # else
+    #   return false
+    # end
   end
 
   # Collects a new todo item from the user and saves
