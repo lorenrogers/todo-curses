@@ -84,8 +84,10 @@ class TodoViewer
     end
   end
 
+  # Collects a new todo item from the user and saves
+  # it to the text file.
   def new_item
-    field = FIELD.new(1, 10, 2, 1, 0, 0)
+    field = FIELD.new(1, @screen.getmaxx-1, 2, 1, 0, 0)
     field.set_field_back(A_UNDERLINE)
     fields = [field]
     my_form = FORM.new(fields);
@@ -107,7 +109,7 @@ class TodoViewer
     my_form.post_form();
 
     # Print field types
-    my_form_win.mvaddstr(4, 2, "No Type")
+    my_form_win.mvaddstr(4, 2, "New item")
     my_form_win.wrefresh();
 
     stdscr.refresh();
@@ -185,7 +187,7 @@ class TodoViewer
 
   private
 
-  # Captures text input into a form.
+  # Captures text input into a form and returns the resulting string.
   # @param window [Window] the form window
   # @param form [FORM] the form to be captured
   # @param field [FIELD] the form to be captured
