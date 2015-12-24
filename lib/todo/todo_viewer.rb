@@ -83,7 +83,6 @@ class TodoViewer
 
     # Save results
     save_new_item(new_item_text)
-    @screen.mvprintw(0, 0, new_item_text)
 
     # Clean up
     my_form.unpost_form
@@ -165,14 +164,8 @@ class TodoViewer
       end
     end
 
-    # Move done tasks to done.txt
     clean_done_tasks
-
-    # put the screen back in its normal state
-    Ncurses.echo()
-    Ncurses.nocbreak()
-    Ncurses.nl()
-    Ncurses.endwin()
+    close_ncurses
   end
 
   private
@@ -181,6 +174,14 @@ class TodoViewer
   def clean_done_tasks
     done_tasks = @list.select { |task| !task.completed_on.nil? }
     File.open(@done_file, 'a') { |file| file << done_tasks.join("\n") }
+  end
+
+  # put the screen back in its normal state
+  def close_ncurses
+    Ncurses.echo()
+    Ncurses.nocbreak()
+    Ncurses.nl()
+    Ncurses.endwin()
   end
 
   # Captures text input into a form and returns the resulting string.
