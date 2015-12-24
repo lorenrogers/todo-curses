@@ -36,8 +36,8 @@ class TodoViewer
     end
     @menu = Ncurses::Menu::MENU.new items
     @menu.set_menu_win(@screen)
-    # This should make a full-screen menu, but it's not working...
     @menu.set_menu_sub(@screen.derwin(@screen.getmaxx, @screen.getmaxy, 0, 0))
+    @menu.set_menu_format(@screen.getmaxy, 1)
     @menu.post_menu
     @screen.refresh
   end
@@ -120,11 +120,7 @@ class TodoViewer
     load_file @list.path
   end
 
-  # Allow the user to interact with the display.
-  # This uses EMACS-like keybindings, and also
-  # vi-like keybindings as well, except that left
-  # and right move to the beginning and end of the
-  # file, respectively.
+  # Capture user input for navigation
   def interact
     while true
       result = true
