@@ -15,24 +15,24 @@ class TodoViewer
         result = scroll_down
       when 'k'.ord
         result = scroll_up
-      when '\s'.ord # white space
-        for i in 0..(@screen.getmaxy - 2)
-          if( ! scroll_down )
-            if( i == 0 )
-              result = false
-            end
-            break
-          end
-        end
-      when Ncurses::KEY_PPAGE
-        for i in 0..(@screen.getmaxy - 2)
-          if( ! scroll_up )
-            if( i == 0 )
-              result = false
-            end
-            break
-          end
-        end
+      # when '\s'.ord # white space
+      #   for i in 0..(@screen.getmaxy - 2)
+      #     if( ! scroll_down )
+      #       if( i == 0 )
+      #         result = false
+      #       end
+      #       break
+      #     end
+      #   end
+      # when Ncurses::KEY_PPAGE
+      #   for i in 0..(@screen.getmaxy - 2)
+      #     if( ! scroll_up )
+      #       if( i == 0 )
+      #         result = false
+      #       end
+      #       break
+      #     end
+      #   end
       when 'h'.ord
         while( scroll_up )
         end
@@ -94,13 +94,19 @@ class TodoViewer
   end
 
   # Scroll the display up by one line
+  # @return [Boolean] true if the action completed successfully.
   def scroll_up
-    @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM)
+    result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM)
+    return true if result == E_OK
+    false
   end
 
   # Scroll the display down by one line
+  # @return [Boolean] true if the action completed successfully.
   def scroll_down
-    @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
+    result = @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
+    return true if result == E_OK
+    false
   end
 
   # Collects a new todo item from the user and saves
