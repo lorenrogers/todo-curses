@@ -47,6 +47,7 @@ class TodoViewer
       if( !result )
         Ncurses.beep
       end
+      # TODO: Catch ctrl+c for graceful exit
     end
 
     clean_done_tasks
