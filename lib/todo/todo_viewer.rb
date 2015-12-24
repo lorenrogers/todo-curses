@@ -8,7 +8,7 @@ class TodoViewer
       c = Ncurses.getch
       case c
       when 'x'.ord
-        do_item
+        toggle_item_completion
       when 'n'.ord
         new_item
       when 'j'.ord
@@ -50,6 +50,7 @@ class TodoViewer
       # TODO: Catch ctrl+c for graceful exit
     end
 
+    # TODO: Confirm exit
     clean_done_tasks
     close_ncurses
   end
@@ -170,10 +171,8 @@ class TodoViewer
   end
 
   # Marks the currently selected menu item as complete and saves the list.
-  def do_item
-    item = @menu.current_item
-    task = item.user_object
-    task.do!
+  def toggle_item_completion
+    @menu.current_item.user_object.toggle!
     save_list
   end
 
