@@ -22,6 +22,7 @@ class TodoViewer
   # and redraws the list view.
   # @param filename [String] path to the text file to be loaded
   def load_file(filename)
+    @done_file = File.dirname(filename) + '/done.txt'
     @list = Todo::List.new filename
     @list.sort! { |x,y| y <=> x } # Reverse sort
     items = []
@@ -164,6 +165,9 @@ class TodoViewer
       end
     end
 
+    # Move done tasks to done.txt
+    clean_done_tasks
+
     # put the screen back in its normal state
     Ncurses.echo()
     Ncurses.nocbreak()
@@ -172,6 +176,12 @@ class TodoViewer
   end
 
   private
+
+  # Saves done tasks to done.txt and removes them from todo.txt
+  def clean_done_tasks
+    done_tasks = @list.select { |task| !task.completed_on.nil? }
+    File.open(@done_file, 'a') { |file| file << done_tasks.join("\n") }
+  end
 
   # Captures text input into a form and returns the resulting string.
   # @param window [Window] the form window
