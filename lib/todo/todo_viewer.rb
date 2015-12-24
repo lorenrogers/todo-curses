@@ -173,7 +173,12 @@ class TodoViewer
   # Saves done tasks to done.txt and removes them from todo.txt
   def clean_done_tasks
     done_tasks = @list.select { |task| !task.completed_on.nil? }
-    File.open(@done_file, 'a') { |file| file << done_tasks.join("\n") }
+    File.open(@done_file, 'a') { |file|
+      file << "\n"
+      file << done_tasks.join("\n")
+    }
+    remaining_tasks = @list.select { |task| task.completed_on.nil? }
+    File.open(@list.path, 'w') { |file| file << remaining_tasks.join("\n") }
   end
 
   # put the screen back in its normal state
