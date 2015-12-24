@@ -1,6 +1,60 @@
 # A curses based todo.txt file viewer
 class TodoViewer
 
+  # Run the ncurses application
+  def interact
+    while true
+      result = true
+      c = Ncurses.getch
+      case c
+      when 'x'.ord
+        do_item
+      when 'n'.ord
+        new_item
+      when 'j'.ord
+        result = scroll_down
+      when 'k'.ord
+        result = scroll_up
+      when '\s'.ord # white space
+        for i in 0..(@screen.getmaxy - 2)
+          if( ! scroll_down )
+            if( i == 0 )
+              result = false
+            end
+            break
+          end
+        end
+      when Ncurses::KEY_PPAGE
+        for i in 0..(@screen.getmaxy - 2)
+          if( ! scroll_up )
+            if( i == 0 )
+              result = false
+            end
+            break
+          end
+        end
+      when 'h'.ord
+        while( scroll_up )
+        end
+      when 'l'.ord
+        while( scroll_down )
+        end
+      when 'q'.ord
+        break
+      else
+        @screen.mvprintw(0,0, "[unknown key `#{Ncurses.keyname(c)}'=#{c}] ")
+      end
+      if( !result )
+        Ncurses.beep
+      end
+    end
+
+    clean_done_tasks
+    close_ncurses
+  end
+
+  private
+
   # Create a new fileviewer, and view the file.
   def initialize(filename)
     init_curses
@@ -115,60 +169,6 @@ class TodoViewer
     task.do!
     save_list
   end
-
-  # Capture user input for navigation
-  def interact
-    while true
-      result = true
-      c = Ncurses.getch
-      case c
-      when 'x'.ord
-        do_item
-      when 'n'.ord
-        new_item
-      when 'j'.ord
-        result = scroll_down
-      when 'k'.ord
-        result = scroll_up
-      when '\s'.ord # white space
-        for i in 0..(@screen.getmaxy - 2)
-          if( ! scroll_down )
-            if( i == 0 )
-              result = false
-            end
-            break
-          end
-        end
-      when Ncurses::KEY_PPAGE
-        for i in 0..(@screen.getmaxy - 2)
-          if( ! scroll_up )
-            if( i == 0 )
-              result = false
-            end
-            break
-          end
-        end
-      when 'h'.ord
-        while( scroll_up )
-        end
-      when 'l'.ord
-        while( scroll_down )
-        end
-      when 'q'.ord
-        break
-      else
-        @screen.mvprintw(0,0, "[unknown key `#{Ncurses.keyname(c)}'=#{c}] ")
-      end
-      if( !result )
-        Ncurses.beep
-      end
-    end
-
-    clean_done_tasks
-    close_ncurses
-  end
-
-  private
 
   # Saves done tasks to done.txt and removes them from todo.txt
   def clean_done_tasks
