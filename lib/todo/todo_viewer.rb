@@ -6,6 +6,7 @@ class TodoViewer
     init_curses
     load_file(filename)
     interact
+    # TODO: Save a copy of the todo.txt list to backup file.
   end
 
   # Perform the curses setup
@@ -25,62 +26,30 @@ class TodoViewer
   # and redraws the list view.
   # @param filename [String] path to the text file to be loaded
   def load_file(filename)
-    list = Todo::List.new filename
-    list.sort!
+    @list = Todo::List.new filename
+    @list.sort!
     items = []
-    list.each do |item|
-      items << Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
+    @list.each do |item|
+      menu_item = Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
+      menu_item.user_object = item
+      items << menu_item
     end
     @menu = Ncurses::Menu::MENU.new items
+    @menu.set_menu_win(@screen)
+    # This should make a full-screen menu, but it's not working...
+    @menu.set_menu_sub(@screen.derwin(@screen.getmaxx, @screen.getmaxy, 0, 0))
     @menu.post_menu
     @screen.refresh
-  end
-
-  # Redraw the list display
-  # @param list [Todo::List] the list of items to be rendered
-  # @param menu [Ncurses::Menu::MENU] the menu to be rendered to
-  def redraw_list(list, menu)
-    # str = @list[@top]
-    # if(str)
-    #   @screen.clear
-    #   @list.sort!
-    #   @list[@top..@screen.getmaxy-1+@top].each_with_index { |line, idx|
-    #     @screen.mvprintw(idx, 0, line.to_s)
-    #   }
-    #   @screen.refresh
-    # end
   end
 
   # Scroll the display up by one line
   def scroll_up
     @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM)
-    # if( @top > 0 )
-    #   @screen.scrl(-1)
-    #   @top -= 1
-    #   str = @list[@top].to_s
-    #   if( str )
-    #     @screen.mvprintw(0, 0, str)
-    #   end
-    #   return true
-    # else
-    #   return false
-    # end
   end
 
   # Scroll the display down by one line
   def scroll_down
     @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
-    # if( @top + @screen.getmaxy < @list.length )
-    #   @screen.scrl(1)
-    #   @top += 1
-    #   str = @list[@top + @screen.getmaxy - 1].to_s
-    #   if( str )
-    #     @screen.mvprintw(@screen.getmaxy - 1, 0, str)
-    #   end
-    #   return true
-    # else
-    #   return false
-    # end
   end
 
   # Collects a new todo item from the user and saves
@@ -116,7 +85,6 @@ class TodoViewer
     new_item_text = capture_text_field_input(my_form_win, my_form, field)
 
     # Save results
-    redraw_list
     save_new_item(new_item_text, @list)
     @screen.mvprintw(0, 0, new_item_text)
 
@@ -132,10 +100,24 @@ class TodoViewer
   # @param task [String] the task to be added
   # @param list [Todo::List] the task to be added
   # @return [Todo::List] the updated list
-  def save_new_item(task, list)
-    list << Todo::Task.new(task)
-    File.open(list.path, 'w') { |file| file << list.join("\n") }
-    list
+  def save_new_item(task)
+    @list << Todo::Task.new(task)
+    save_list
+    @list
+  end
+
+  # Saves the current state of the list. Overrides the current file.
+  def save_list
+    File.open(@list.path, 'w') { |file| file << @list.join("\n") }
+  end
+
+  # Marks the currently selected menu item as complete and saves the list.
+  def do_item
+    item = @menu.current_item
+    task = item.user_object
+    task.do!
+    save_list
+    load_file @list.path
   end
 
   # Allow the user to interact with the display.
@@ -148,6 +130,8 @@ class TodoViewer
       result = true
       c = Ncurses.getch
       case c
+      when 'x'.ord
+        do_item
       when 'n'.ord
         new_item
       when 'j'.ord
