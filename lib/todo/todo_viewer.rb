@@ -11,15 +11,11 @@ class TodoViewer
 
   # Perform the curses setup
   def init_curses
-    # signal(SIGINT, finish)
-
     @screen = Ncurses.initscr
     Ncurses.nonl
     Ncurses.cbreak
     Ncurses.noecho
-
     @screen.scrollok(true)
-    #$screen.keypad(true)
   end
 
   # Loads the given file as a todo.txt array. Sets the view to the top
@@ -27,7 +23,7 @@ class TodoViewer
   # @param filename [String] path to the text file to be loaded
   def load_file(filename)
     @list = Todo::List.new filename
-    @list.sort!
+    @list.sort! { |x,y| y <=> x } # Reverse sort
     items = []
     @list.each do |item|
       menu_item = Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
@@ -85,7 +81,7 @@ class TodoViewer
     new_item_text = capture_text_field_input(my_form_win, my_form, field)
 
     # Save results
-    save_new_item(new_item_text, @list)
+    save_new_item(new_item_text)
     @screen.mvprintw(0, 0, new_item_text)
 
     # Clean up
@@ -98,7 +94,6 @@ class TodoViewer
 
   # Adds a new item to the list and saves the file
   # @param task [String] the task to be added
-  # @param list [Todo::List] the task to be added
   # @return [Todo::List] the updated list
   def save_new_item(task)
     @list << Todo::Task.new(task)
@@ -107,8 +102,10 @@ class TodoViewer
   end
 
   # Saves the current state of the list. Overrides the current file.
+  # Reloads the newly saved file.
   def save_list
     File.open(@list.path, 'w') { |file| file << @list.join("\n") }
+    load_file @list.path
   end
 
   # Marks the currently selected menu item as complete and saves the list.
@@ -117,7 +114,6 @@ class TodoViewer
     task = item.user_object
     task.do!
     save_list
-    load_file @list.path
   end
 
   # Capture user input for navigation
