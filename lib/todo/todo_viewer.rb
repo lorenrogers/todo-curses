@@ -82,7 +82,14 @@ class TodoViewer
     @list = Todo::List.new filename
     @list.sort! { |x,y| y <=> x } # Reverse sort
     items = []
+    last_priority = nil
     @list.each do |item|
+      # Insert dividers
+      if item.priority != last_priority
+        divider = Ncurses::Menu::ITEM.new(item.priority.to_s, '')
+        items << divider
+        last_priority = item.priority
+      end
       menu_item = Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
       menu_item.user_object = item
       items << menu_item
