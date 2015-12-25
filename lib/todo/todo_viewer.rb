@@ -83,21 +83,34 @@ class TodoViewer
     @list.sort! { |x,y| y <=> x } # Reverse sort
     items = []
     last_priority = nil
+
+    # Build the menu item list
     @list.each do |item|
-      # Insert dividers
+      # Insert dividers on priority change
       if item.priority != last_priority
         divider = Ncurses::Menu::ITEM.new(item.priority.to_s, '')
         items << divider
         last_priority = item.priority
       end
+
+      # Build the todo menu item
       menu_item = Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
       menu_item.user_object = item
       items << menu_item
     end
+
+    # Build the final menu object
     @menu = Ncurses::Menu::MENU.new items
     @menu.set_menu_win(@screen)
     @menu.set_menu_sub(@screen.derwin(@screen.getmaxx, @screen.getmaxy, 0, 0))
     @menu.set_menu_format(@screen.getmaxy, 1)
+
+    # Set dividers to non-interactive
+    @menu.menu_items.select { |i| i.user_object.nil? }.each do |divider|
+      divider.item_opts_off Menu::O_SELECTABLE
+    end
+
+    # Show the menu
     @menu.post_menu
     @screen.refresh
   end
