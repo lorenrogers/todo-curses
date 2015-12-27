@@ -112,6 +112,7 @@ class TodoViewer
 
     # Show the menu
     @menu.post_menu
+    @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM) unless @menu.current_item.user_object
     @screen.refresh
   end
 
@@ -119,6 +120,7 @@ class TodoViewer
   # @return [Boolean] true if the action completed successfully.
   def scroll_up
     result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM)
+    result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM) unless @menu.current_item.user_object
     return true if result == E_OK
     false
   end
@@ -127,6 +129,7 @@ class TodoViewer
   # @return [Boolean] true if the action completed successfully.
   def scroll_down
     result = @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
+    result = @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM) unless @menu.current_item.user_object
     return true if result == E_OK
     false
   end
