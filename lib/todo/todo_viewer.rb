@@ -119,7 +119,9 @@ class TodoViewer
   # Scroll the display up by one line
   # @return [Boolean] true if the action completed successfully.
   def scroll_up
-    result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM)
+    # Move to the next item if it's not the first in the list
+    result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM) unless @menu.current_item.item_index < 2
+    # Move to the next item if it's not a divider
     result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM) unless @menu.current_item.user_object
     return true if result == E_OK
     false
