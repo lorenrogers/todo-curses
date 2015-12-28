@@ -120,16 +120,15 @@ class TodoViewer
       divider.item_opts_off Menu::O_SELECTABLE
     end
 
-    # Set selection position
-    if current_selection
-      @menu.set_current_item current_selection
-    else
-      @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM) unless @menu.current_item.user_object
-    end
-
     # Show the menu
     @screen.clear
     @menu.post_menu
+
+    # Set selection position
+    @menu.set_current_item current_selection if current_selection
+    @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM) if @menu.current_item.user_object.nil?
+
+    # Refresh
     @screen.refresh
   end
 
@@ -137,7 +136,10 @@ class TodoViewer
   # @return [Boolean] true if the action completed successfully.
   def scroll_up
     # Move to the next item if it's not the first in the list
-    result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM) unless @menu.current_item.item_index < 2
+    unless @menu.menu_items[0].user_object.nil? &&
+           @menu.current_item.item_index < 2
+      result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM)
+    end
     # Move to the next item if it's not a divider
     result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM) unless @menu.current_item.user_object
     return true if result == E_OK
