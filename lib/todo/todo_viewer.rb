@@ -1,3 +1,4 @@
+# TODO: Refactor into proper size functions
 # A curses based todo.txt file viewer
 class TodoViewer
 
@@ -59,6 +60,8 @@ class TodoViewer
 
   # Create a new fileviewer, and view the file.
   def initialize(filename)
+    @log = Logger.new 'log.txt'
+    @log.debug 'Run Started'
     init_curses
     load_file(filename)
     interact
@@ -83,12 +86,15 @@ class TodoViewer
     @list.sort! { |x,y| y <=> x } # Reverse sort
     items = []
     last_priority = nil
+    last_selection = @menu.current_item.user_object if @menu
+    current_selection = nil
 
     # Build the menu item list
     @list.each do |item|
       # Insert dividers on priority change
       if item.priority != last_priority
-        divider = Ncurses::Menu::ITEM.new(item.priority.to_s, '')
+        divider_priority = item.priority.nil? ? 'N/A' : item.priority.to_s
+        divider = Ncurses::Menu::ITEM.new(divider_priority, '')
         items << divider
         last_priority = item.priority
       end
@@ -97,22 +103,33 @@ class TodoViewer
       menu_item = Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
       menu_item.user_object = item
       items << menu_item
+
+      # Set the current selection
+      current_selection = menu_item if item.to_s == last_selection.to_s
     end
 
     # Build the final menu object
+    # TODO: Possible memory leak from resetting object over top?
     @menu = Ncurses::Menu::MENU.new items
     @menu.set_menu_win(@screen)
     @menu.set_menu_sub(@screen.derwin(@screen.getmaxx, @screen.getmaxy, 0, 0))
     @menu.set_menu_format(@screen.getmaxy, 1)
 
     # Set dividers to non-interactive
-    @menu.menu_items.select { |i| i.user_object.nil? }.each do |divider|
+    @menu.menu_items.select{ |i| i.user_object.nil? }.each do |divider|
       divider.item_opts_off Menu::O_SELECTABLE
     end
 
+    # Set selection position
+    if current_selection
+      @menu.set_current_item current_selection
+    else
+      @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM) unless @menu.current_item.user_object
+    end
+
     # Show the menu
+    @screen.clear
     @menu.post_menu
-    @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM) unless @menu.current_item.user_object
     @screen.refresh
   end
 
