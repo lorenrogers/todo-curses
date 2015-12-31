@@ -11,8 +11,8 @@ x   X: toggle task completion
     I: set priority
     . or F5: reload tasks from file
     ?: show help
-    Alt+Up or Ctrl+K: increase priority
-    Alt+Down or Ctrl+J: decrease priority
+    Shift+K: increase priority
+    Shift+J: decrease priority
     Alt+Left/Right: clear priority
     Ctrl+Alt+Up: increase due date by 1 day
     Ctrl+Alt+Down: decrease due date by 1 day
