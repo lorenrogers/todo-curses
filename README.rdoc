@@ -5,10 +5,9 @@ Planned keyboard shortcuts:
 x   N: new task
 x   J: next task
 x   K: prev task
-    X: toggle task completion
-    A: archive tasks
+x   X: toggle task completion
     D or Del or Backspace: delete task (with confirmation)
-    U or F2: update task
+    E or F2: update task
     I: set priority
     . or F5: reload tasks from file
     ?: show help
@@ -29,6 +28,7 @@ Things for later:
 
 Things not included:
 
+    A: archive tasks
     Ctrl+C: copy task to clipboard
     Ctrl+Shift+C: copy task to edit field
     Win+Alt+T: hide/unhide windows
