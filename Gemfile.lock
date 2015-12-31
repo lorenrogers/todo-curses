@@ -34,7 +34,6 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
-    todo-txt (0.4)
 
 PLATFORMS
   ruby
@@ -45,7 +44,6 @@ DEPENDENCIES
   rake
   rdoc
   todo!
-  todo-txt
 
 BUNDLED WITH
-   1.10.6
+   1.11.2

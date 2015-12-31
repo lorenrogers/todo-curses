@@ -8,6 +8,10 @@ class TodoViewer
       result = true
       c = Ncurses.getch
       case c
+      when 'J'.ord
+        result = priority_down
+      when 'K'.ord
+        result = priority_up
       when 'x'.ord
         toggle_item_completion
       when 'n'.ord
@@ -130,6 +134,20 @@ class TodoViewer
 
     # Refresh
     @screen.refresh
+  end
+
+  # Moves the current selection's priority up by one unless it is at Z.
+  def priority_up
+    item = @menu.current_item.user_object
+    item.priority_inc
+    save_list
+  end
+
+  # Moves the current selection's priority down by one unless it is at A.
+  def priority_down
+    item = @menu.current_item.user_object
+    item.priority_dec
+    save_list
   end
 
   # Scroll the display up by one line
