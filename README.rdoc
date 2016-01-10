@@ -1,7 +1,7 @@
 = todo
 
 This is a super crude first pass at a terminal application for
-todo.txt files. A lot of the features are based on how the windows
+todo.txt files. A lot of the features are based on how
 {todotxt.net}[todotxt.net] handles things. I really liked the overall
 design of the application, just not the fact that it didn't run in my
 linux terminal. To solve this, I decided to roll my own using Ruby and
