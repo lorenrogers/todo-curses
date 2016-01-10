@@ -1,6 +1,9 @@
 = todo
 
-Planned keyboard shortcuts:
+== Possible features:
+If no argument is given, open the default file. Else open the specified one.
+
+== Planned keyboard shortcuts:
 
 x   N: new task
 x   J: next task
@@ -18,7 +21,7 @@ x   X: toggle task completion
     Ctrl+Alt+Down: decrease due date by 1 day
     Ctrl+Alt+Left/Right: remove due date
 
-Things for later:
+== Things for later:
 
     Shift+J: Cycle through displays (Priority, project, etc.)
     F: filter tasks (free-text, one filter condition per line)
@@ -26,7 +29,7 @@ Things for later:
     O or Ctrl+O: open todo.txt file
     C or Ctrl+N: new todo.txt file
 
-Things not included:
+== Things not included:
 
     A: archive tasks
     Ctrl+C: copy task to clipboard
