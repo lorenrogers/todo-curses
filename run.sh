@@ -1,2 +1,2 @@
 #!/bin/bash
-bundle exec bin/todo list todo.txt
+bundle exec bin/todo-curses list todo.txt

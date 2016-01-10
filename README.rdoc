@@ -1,4 +1,4 @@
-= todo
+= TODO-Curses
 
 This is a super crude first pass at a terminal application for
 todo.txt files. A lot of the features are based on how
@@ -10,6 +10,10 @@ files, and Ncurses was something I'd been meaning to learn for a while.
 
 No doubt there's a ton of nasty code in here. Please help me along if you're
 interested. I'm sure there's a lot that can be refactored.
+
+{Gem available on Rubygems.org}[https://rubygems.org/gems/todo-curses]
+
+{Source on github.com}[https://github.com/lorentrogers/todo-curses]
 
 == Current features
 
