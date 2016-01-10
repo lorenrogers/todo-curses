@@ -38,6 +38,7 @@ Then you'll probably want to make an alias in your .*rc file. Here's mine:
 
 == Planned features
 
+- Safer file handling (confirmations, errors, etc.)
 - Use ctrl instead of shift for priority change
 - Color code priorities
 - Add a spacer between priority groups
