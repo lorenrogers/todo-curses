@@ -1,7 +1,33 @@
 = todo
 
+This is a super crude first pass at a terminal application for
+todo.txt files.
+
+== Current features
+
+- Open todo.txt files and view a scrollable list of items
+- Move to the next item with `j`
+- Move to the prev item with `k`
+- Create new items with `n`
+- Toggle done / not done state with `x`
+- Move priority down with `shift+j`
+- Move priority up with `shift+k`
+- Completed tasks are archived to done.txt on exit
+
+== TODO
+- Use ctrl instead of shift for priority change
+- Color code priorities
+- Add a spacer between priority groups
+- Priority view with `ctrl+1`
+- Project view with `ctrl+2`
+- Strip out application wrapper; not needed
+- Prep for release as a gem
+
+
+
 == Possible features:
 If no argument is given, open the default file. Else open the specified one.
+Default tbd.
 
 == Planned keyboard shortcuts:
 
