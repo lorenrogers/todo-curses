@@ -15,6 +15,16 @@ interested. I'm sure there's a lot that can be refactored.
 
 {Source on github.com}[https://github.com/lorentrogers/todo-curses]
 
+== Installation
+
+Grab the gem:
+
+  gem install todo-curses
+
+Then you'll probably want to make an alias in your .*rc file. Here's mine:
+
+  alias tt="todo-curses list ~/dev/todo/todo.txt"
+
 == Current features
 
 - Open todo.txt files and view a scrollable list of items
