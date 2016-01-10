@@ -1,7 +1,15 @@
 = todo
 
 This is a super crude first pass at a terminal application for
-todo.txt files.
+todo.txt files. A lot of the features are based on how the windows
+{todotxt.net}[todotxt.net] handles things. I really liked the overall
+design of the application, just not the fact that it didn't run in my
+linux terminal. To solve this, I decided to roll my own using Ruby and
+Ncurses. There was already a pretty robust library for handling todo.txt
+files, and Ncurses was something I'd been meaning to learn for a while.
+
+No doubt there's a ton of nasty code in here. Please help me along if you're
+interested. I'm sure there's a lot that can be refactored.
 
 == Current features
 
@@ -14,7 +22,8 @@ todo.txt files.
 - Move priority up with `shift+k`
 - Completed tasks are archived to done.txt on exit
 
-== TODO
+== Planned features
+
 - Use ctrl instead of shift for priority change
 - Color code priorities
 - Add a spacer between priority groups
@@ -22,19 +31,31 @@ todo.txt files.
 - Project view with `ctrl+2`
 - Strip out application wrapper; not needed
 - Prep for release as a gem
+- If no argument is given, open the default file. Default tbd.
 
+== Ideas for later
 
+    Shift+J: Cycle through displays (Priority, project, etc.)
+    F: filter tasks (free-text, one filter condition per line)
+    T: append text to selected tasks
+    O or Ctrl+O: open todo.txt file
+    C or Ctrl+N: new todo.txt file
 
-== Possible features:
-If no argument is given, open the default file. Else open the specified one.
-Default tbd.
+== Things not included
 
-== Planned keyboard shortcuts:
+    A: archive tasks
+    Ctrl+C: copy task to clipboard
+    Ctrl+Shift+C: copy task to edit field
+    Win+Alt+T: hide/unhide windows
+    0: clear filter
+    1-9: apply numbered filter preset
 
-x   N: new task
-x   J: next task
-x   K: prev task
-x   X: toggle task completion
+== Keyboard shortcut ideas
+
+    N: new task
+    J: next task
+    K: prev task
+    X: toggle task completion
     D or Del or Backspace: delete task (with confirmation)
     E or F2: update task
     I: set priority
@@ -46,23 +67,3 @@ x   X: toggle task completion
     Ctrl+Alt+Up: increase due date by 1 day
     Ctrl+Alt+Down: decrease due date by 1 day
     Ctrl+Alt+Left/Right: remove due date
-
-== Things for later:
-
-    Shift+J: Cycle through displays (Priority, project, etc.)
-    F: filter tasks (free-text, one filter condition per line)
-    T: append text to selected tasks
-    O or Ctrl+O: open todo.txt file
-    C or Ctrl+N: new todo.txt file
-
-== Things not included:
-
-    A: archive tasks
-    Ctrl+C: copy task to clipboard
-    Ctrl+Shift+C: copy task to edit field
-    Win+Alt+T: hide/unhide windows
-    0: clear filter
-    1-9: apply numbered filter preset
-
-:include:todo.rdoc
-
