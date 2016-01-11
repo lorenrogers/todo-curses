@@ -11,6 +11,8 @@ files, and Ncurses was something I'd been meaning to learn for a while.
 No doubt there's a ton of nasty code in here. Please help me along if you're
 interested. I'm sure there's a lot that can be refactored.
 
+{<img src="https://badge.fury.io/rb/todo-curses.svg" alt="Gem Version" />}[https://badge.fury.io/rb/todo-curses]
+
 {Gem available on Rubygems.org}[https://rubygems.org/gems/todo-curses]
 
 {Source on github.com}[https://github.com/lorentrogers/todo-curses]
