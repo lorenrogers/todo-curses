@@ -2,7 +2,7 @@
 
 A curses-based application for managing todo.txt files.
 
-https://raw.githubusercontent.com/lorentrogers/todo-curses/master/images/todo-curses-demo.gif
+<img src=https://raw.githubusercontent.com/lorentrogers/todo-curses/master/images/todo-curses-demo.gif alt="Todo-Curses demo screen capture" />
 
 A lot of the features are based on how
 {todotxt.net}[todotxt.net] handles things. I really liked the overall
