@@ -1,15 +1,16 @@
 = TODO-Curses
 
-This is a super crude first pass at a terminal application for
-todo.txt files. A lot of the features are based on how
+A curses-based application for managing todo.txt files.
+
+A lot of the features are based on how
 {todotxt.net}[todotxt.net] handles things. I really liked the overall
 design of the application, just not the fact that it didn't run in my
 linux terminal. To solve this, I decided to roll my own using Ruby and
-Ncurses. There was already a pretty robust library for handling todo.txt
+Ncurses. There was already a robust library for handling todo.txt
 files, and Ncurses was something I'd been meaning to learn for a while.
 
-No doubt there's a ton of nasty code in here. Please help me along if you're
-interested. I'm sure there's a lot that can be refactored.
+No doubt there's a ton of nasty code in here.
+I'm sure there's a lot that can be refactored; pull requests welcome!
 
 {<img src="https://badge.fury.io/rb/todo-curses.svg" alt="Gem Version" />}[https://badge.fury.io/rb/todo-curses]
 
