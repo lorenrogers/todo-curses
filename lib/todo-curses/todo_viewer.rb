@@ -1,4 +1,3 @@
-# TODO: Refactor into proper size functions
 # A curses based todo.txt file viewer
 class TodoViewer
   # Run the ncurses application
@@ -31,10 +30,7 @@ class TodoViewer
         @screen.mvprintw(0, 0, "[unknown key `#{Ncurses.keyname(c)}'=#{c}] ")
       end
       Ncurses.beep unless result
-      # TODO: Catch ctrl+c for graceful exit
     end
-
-    # TODO: Confirm exit
     clean_done_tasks
     close_ncurses
   end
@@ -48,7 +44,6 @@ class TodoViewer
     init_curses
     load_file(filename)
     interact
-    # TODO: Save a copy of the todo.txt list to backup file.
   end
 
   # Perform the curses setup
@@ -92,7 +87,6 @@ class TodoViewer
     end
 
     # Build the final menu object
-    # TODO: Possible memory leak from resetting object over top?
     @menu = Ncurses::Menu::MENU.new items
     @menu.set_menu_win(@screen)
     @menu.set_menu_sub(@screen.derwin(@screen.getmaxx, @screen.getmaxy, 0, 0))
