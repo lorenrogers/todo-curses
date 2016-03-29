@@ -1,4 +1,5 @@
 module Todo
+  # Handles todo.txt list files
   class List < Array
     # Initializes a Todo List object with a path to the corresponding todo.txt
     # file. For example, if your todo.txt file is located at:
@@ -20,7 +21,7 @@ module Todo
     #   array.push Todo::Task.new("(A) An actual task!")
     #
     #   list = Todo::List.new array
-    def initialize list
+    def initialize(list)
       if list.is_a? Array
         # No file path was given.
         @path = nil
@@ -29,10 +30,10 @@ module Todo
         list.each do |task|
           # If it's a string, make a new task out of it.
           if task.is_a? String
-            self.push Todo::Task.new task
+            push Todo::Task.new task
           # If it's a task, just add it.
           elsif task.is_a? Todo::Task
-            self.push task
+            push task
           end
         end
       elsif list.is_a? String
@@ -41,7 +42,7 @@ module Todo
         # Read in lines from file, create Todo::Tasks out of them and push them
         # onto self.
         File.open(list) do |file|
-          file.each_line { |line| self.push Todo::Task.new line }
+          file.each_line { |line| push Todo::Task.new line }
         end
       end
     end
@@ -58,8 +59,8 @@ module Todo
     #
     #   list = Todo::List.new "/path/to/list"
     #   list.by_priority "A" #=> Will be a new list with only priority A tasks
-    def by_priority priority
-      Todo::List.new self.select { |task| task.priority == priority }
+    def by_priority(priority)
+      Todo::List.new select { |task| task.priority == priority }
     end
 
     # Filters the list by context and returns a new list.
@@ -69,8 +70,8 @@ module Todo
     #   list = Todo::List.new "/path/to/list"
     #   list.by_context "@context" #=> Will be a new list with only tasks
     #                                  containing "@context"
-    def by_context context
-      Todo::List.new self.select { |task| task.contexts.include? context }
+    def by_context(context)
+      Todo::List.new select { |task| task.contexts.include? context }
     end
 
     # Filters the list by project and returns a new list.
@@ -80,8 +81,8 @@ module Todo
     #   list = Todo::List.new "/path/to/list"
     #   list.by_project "+project" #=> Will be a new list with only tasks
     #                                  containing "+project"
-    def by_project project
-      Todo::List.new self.select { |task| task.projects.include? project }
+    def by_project(project)
+      Todo::List.new select { |task| task.projects.include? project }
     end
   end
 end

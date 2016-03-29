@@ -1,7 +1,6 @@
 # TODO: Refactor into proper size functions
 # A curses based todo.txt file viewer
 class TodoViewer
-
   # Run the ncurses application
   def interact
     while true
@@ -20,38 +19,18 @@ class TodoViewer
         result = scroll_down
       when 'k'.ord
         result = scroll_up
-      # when '\s'.ord # white space
-      #   for i in 0..(@screen.getmaxy - 2)
-      #     if( ! scroll_down )
-      #       if( i == 0 )
-      #         result = false
-      #       end
-      #       break
-      #     end
-      #   end
-      # when Ncurses::KEY_PPAGE
-      #   for i in 0..(@screen.getmaxy - 2)
-      #     if( ! scroll_up )
-      #       if( i == 0 )
-      #         result = false
-      #       end
-      #       break
-      #     end
-      #   end
       when 'h'.ord
-        while( scroll_up )
+        while scroll_up
         end
       when 'l'.ord
-        while( scroll_down )
+        while scroll_down
         end
       when 'q'.ord
         break
       else
-        @screen.mvprintw(0,0, "[unknown key `#{Ncurses.keyname(c)}'=#{c}] ")
+        @screen.mvprintw(0, 0, "[unknown key `#{Ncurses.keyname(c)}'=#{c}] ")
       end
-      if( !result )
-        Ncurses.beep
-      end
+      Ncurses.beep unless result
       # TODO: Catch ctrl+c for graceful exit
     end
 
@@ -87,7 +66,7 @@ class TodoViewer
   def load_file(filename)
     @done_file = File.dirname(filename) + '/done.txt'
     @list = Todo::List.new filename
-    @list.sort! { |x,y| y <=> x } # Reverse sort
+    @list.sort! { |x, y| y <=> x } # Reverse sort
     items = []
     last_priority = nil
     last_selection = @menu.current_item.user_object if @menu
@@ -120,7 +99,7 @@ class TodoViewer
     @menu.set_menu_format(@screen.getmaxy, 1)
 
     # Set dividers to non-interactive
-    @menu.menu_items.select{ |i| i.user_object.nil? }.each do |divider|
+    @menu.menu_items.select { |i| i.user_object.nil? }.each do |divider|
       divider.item_opts_off Menu::O_SELECTABLE
     end
 
@@ -130,7 +109,8 @@ class TodoViewer
 
     # Set selection position
     @menu.set_current_item current_selection if current_selection
-    @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM) if @menu.current_item.user_object.nil?
+    @menu.menu_driver(
+      Ncurses::Menu::REQ_DOWN_ITEM) if @menu.current_item.user_object.nil?
 
     # Refresh
     @screen.refresh
@@ -159,7 +139,8 @@ class TodoViewer
       result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM)
     end
     # Move to the next item if it's not a divider
-    result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM) unless @menu.current_item.user_object
+    result = @menu.menu_driver(
+      Ncurses::Menu::REQ_UP_ITEM) unless @menu.current_item.user_object
     return true if result == E_OK
     false
   end
@@ -168,7 +149,8 @@ class TodoViewer
   # @return [Boolean] true if the action completed successfully.
   def scroll_down
     result = @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
-    result = @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM) unless @menu.current_item.user_object
+    result = @menu.menu_driver(
+      Ncurses::Menu::REQ_DOWN_ITEM) unless @menu.current_item.user_object
     return true if result == E_OK
     false
   end
@@ -176,32 +158,32 @@ class TodoViewer
   # Collects a new todo item from the user and saves
   # it to the text file.
   def new_item
-    field = FIELD.new(1, @screen.getmaxx-1, 2, 1, 0, 0)
+    field = FIELD.new(1, @screen.getmaxx - 1, 2, 1, 0, 0)
     field.set_field_back(A_UNDERLINE)
     fields = [field]
-    my_form = FORM.new(fields);
-    my_form.user_object = "My identifier"
+    my_form = FORM.new(fields)
+    my_form.user_object = 'My identifier'
 
     # Calculate the area required for the form
-    rows = Array.new()
-    cols = Array.new()
-    my_form.scale_form(rows, cols);
+    rows = []
+    cols = []
+    my_form.scale_form(rows, cols)
 
     # Create the window to be associated with the form
-    my_form_win = WINDOW.new(rows[0] + 3, cols[0] + 14, 1, 1);
-    my_form_win.keypad(TRUE);
+    my_form_win = WINDOW.new(rows[0] + 3, cols[0] + 14, 1, 1)
+    my_form_win.keypad(TRUE)
 
     # Set main window and sub window
-    my_form.set_form_win(my_form_win);
-    my_form.set_form_sub(my_form_win.derwin(rows[0], cols[0], 2, 12));
+    my_form.set_form_win(my_form_win)
+    my_form.set_form_sub(my_form_win.derwin(rows[0], cols[0], 2, 12))
 
-    my_form.post_form();
+    my_form.post_form
 
     # Print field types
-    my_form_win.mvaddstr(4, 2, "New item")
-    my_form_win.wrefresh();
+    my_form_win.mvaddstr(4, 2, 'New item')
+    my_form_win.wrefresh
 
-    stdscr.refresh();
+    stdscr.refresh
 
     new_item_text = capture_text_field_input(my_form_win, my_form, field)
 
@@ -213,7 +195,7 @@ class TodoViewer
     my_form.free_form
 
     field.free_field
-    # fields.each {|f| f.free_field()}
+    # fields.each {|f| f.free_field}
   end
 
   # Adds a new item to the list and saves the file
@@ -241,20 +223,20 @@ class TodoViewer
   # Saves done tasks to done.txt and removes them from todo.txt
   def clean_done_tasks
     done_tasks = @list.select { |task| !task.completed_on.nil? }
-    File.open(@done_file, 'a') { |file|
+    File.open(@done_file, 'a') do |file|
       file << "\n"
       file << done_tasks.join("\n")
-    }
+    end
     remaining_tasks = @list.select { |task| task.completed_on.nil? }
     File.open(@list.path, 'w') { |file| file << remaining_tasks.join("\n") }
   end
 
   # put the screen back in its normal state
   def close_ncurses
-    Ncurses.echo()
-    Ncurses.nocbreak()
-    Ncurses.nl()
-    Ncurses.endwin()
+    Ncurses.echo
+    Ncurses.nocbreak
+    Ncurses.nl
+    Ncurses.endwin
   end
 
   # Captures text input into a form and returns the resulting string.
@@ -263,18 +245,16 @@ class TodoViewer
   # @param field [FIELD] the form to be captured
   # @return [String] the captured input
   def capture_text_field_input(window, form, field)
-    # Capture typing...
-    while((ch = window.getch()) != 13) # return is ascii 13
+    while (ch = window.getch) != 13 # return is ascii 13
       case ch
       when KEY_LEFT
-        form.form_driver(REQ_PREV_CHAR);
+        form.form_driver REQ_PREV_CHAR
       when KEY_RIGHT
-        form.form_driver(REQ_NEXT_CHAR);
+        form.form_driver REQ_NEXT_CHAR
       when KEY_BACKSPACE
-        form.form_driver(REQ_DEL_PREV);
+        form.form_driver REQ_DEL_PREV
       else
-        # If this is a normal character, it gets Printed
-        form.form_driver(ch);
+        form.form_driver ch # If this is a normal character, it gets Printed
       end
     end
     form.form_driver REQ_NEXT_FIELD # Request next to set 0 buffer in field
