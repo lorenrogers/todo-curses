@@ -1,6 +1,6 @@
 # Ensure we require the local version and not
 # one we might have installed already
-require File.join([File.dirname(__FILE__), 'lib', 'todo', 'version.rb'])
+require File.join([File.dirname(__FILE__), 'lib', 'todo-curses', 'version.rb'])
 # rubocop:disable Lint/UselessAssignment
 spec = Gem::Specification.new do |s|
   # rubocop:enable Lint/UselessAssignment

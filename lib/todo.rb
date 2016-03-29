@@ -1,6 +1,0 @@
-require 'gli'
-require 'todo-txt'
-require 'ncursesw'
-require 'todo/version.rb'
-require 'todo/todo_viewer.rb'
-require 'logger'
