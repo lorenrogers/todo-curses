@@ -7,9 +7,22 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    ast (2.2.0)
     gli (2.13.4)
     ncursesw (1.4.9)
+    parser (2.3.0.7)
+      ast (~> 2.2)
+    powerpack (0.1.1)
+    rainbow (2.1.0)
     rake (11.1.2)
+    rubocop (0.39.0)
+      parser (>= 2.3.0.7, < 3.0)
+      powerpack (~> 0.1)
+      rainbow (>= 1.99.1, < 3.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (~> 1.0, >= 1.0.1)
+    ruby-progressbar (1.7.5)
+    unicode-display_width (1.0.2)
 
 PLATFORMS
   ruby
@@ -18,6 +31,7 @@ DEPENDENCIES
   gli (~> 2.13, >= 2.13.4)
   ncursesw (~> 1.4, >= 1.4.9)
   rake (~> 11.1, >= 11.1.2)
+  rubocop (~> 0.39.0)
   todo-curses!
 
 BUNDLED WITH
