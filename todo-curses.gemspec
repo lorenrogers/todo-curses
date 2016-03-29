@@ -1,22 +1,27 @@
-# Ensure we require the local version and not
-# one we might have installed already
-require File.join([File.dirname(__FILE__), 'lib', 'todo-curses', 'version.rb'])
-# rubocop:disable Lint/UselessAssignment
-spec = Gem::Specification.new do |s|
-  # rubocop:enable Lint/UselessAssignment
-  s.name = 'todo-curses'
-  s.version = Todo::VERSION
-  s.author = 'Loren Rogers'
-  s.email = 'loren@lorentrogers.com'
-  s.homepage = 'https://github.com/lorentrogers/todo-curses'
-  s.platform = Gem::Platform::RUBY
-  s.summary = 'An interactive terminal application for managing todo.txt files.'
-  s.files = `git ls-files`.split("
-")
-  s.require_paths << 'lib'
-  s.has_rdoc = true
-  s.extra_rdoc_files = ['README.rdoc', 'todo.rdoc']
-  s.bindir = 'bin'
-  s.executables << 'todo-curses'
-  s.add_runtime_dependency('gli', '2.13.4')
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'TodoCurses/version'
+
+Gem::Specification.new do |spec|
+  spec.name          = "todo-curses"
+  spec.license       = "GPL-3.0"
+  spec.version       = TodoCurses::VERSION
+  spec.authors       = ["Loren Rogers"]
+  spec.email         = ["loren@lorentrogers.com"]
+  spec.summary       = %q{An interactive terminal application for managing todo.txt files.}
+  spec.homepage      = "https://github.com/lorentrogers/todo-curses"
+  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  spec.bindir        = "bin"
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.require_paths = ["lib"]
+
+  spec.add_development_dependency "bundler", "~> 1.11"
+  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency('rdoc', '~> 4.2', '>= 4.2.2')
+  spec.add_development_dependency('aruba', '~> 0.14.1')
+  spec.add_dependency('methadone', '~> 1.9', '>= 1.9.2')
+  spec.add_dependency('ncursesw', '~> 1.4', '>= 1.4.9')
+  spec.add_development_dependency('test-unit', '~> 3.1', '>= 3.1.8')
+  spec.add_development_dependency('rubocop', '~> 0.39.0')
 end

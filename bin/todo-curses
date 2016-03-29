@@ -1,47 +1,44 @@
 #!/usr/bin/env ruby
 
-require 'todo-curses'
-include GLI::App
-include Ncurses
-include Ncurses::Form
+require 'optparse'
+require 'methadone'
+require 'TodoCurses'
 
-program_desc 'A simple interface for managing todo.txt files.'
+class App
+  include Methadone::Main
+  include Methadone::CLILogging
+  include TodoCurses
 
-subcommand_option_handling :normal
-arguments :strict
-
-desc 'Starts an interactive editor for the given todo.txt list.'
-arg_name 'Describe arguments to list here'
-command :list do |c|
-  c.action do |global_options, options, args|
-    if args.size != 1
-      printf("usage: #{$PROGRAM_NAME} file\n")
-      exit
-    end
-
-    TodoViewer.new(ARGV[0])
+  main do |todo_path|
+    # your program code here
+    # You can access CLI options via
+    # the options Hash
   end
-end
 
-pre do # |global, command, options, args|
-  # Pre logic here
-  # Return true to proceed; false to abort and not call the
-  # chosen command
-  # Use skips_pre before a command to skip this block
-  # on that command only
-  true
-end
+  # supplemental methods here
 
-post do # |global, command, options, args|
-  # Post logic here
-  # Use skips_post before a command to skip this
-  # block on that command only
-end
+  # Declare command-line interface here
 
-on_error do # |exception|
-  # Error logic here
-  # return false to skip default error handling
-  true
-end
+  # description "one line description of your app"
+  #
+  # Accept flags via:
+  # on("--flag VAL","Some flag")
+  # options[flag] will contain VAL
+  #
+  # Specify switches via:
+  # on("--[no-]switch","Some switch")
+  #
+  # Or, just call OptionParser methods on opts
+  #
+  # Require an argument
+  # arg :some_arg
+  #
+  # # Make an argument optional
+  # arg :optional_arg, :optional
 
-exit run(ARGV)
+  version TodoCurses::VERSION
+
+  use_log_level_option :toggle_debug_on_signal => 'USR1'
+
+  go!
+end

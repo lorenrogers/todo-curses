@@ -1,4 +1,4 @@
-# TODO-Curses
+# TodoCurses
 
 A curses-based application for managing todo.txt files.
 
@@ -90,6 +90,19 @@ mine:
 - Ctrl+Alt+Up: increase due date by 1 day
 - Ctrl+Alt+Down: decrease due date by 1 day
 - Ctrl+Alt+Left/Right: remove due date
+
+## Development
+
+To release a new version, update
+the version number in `version.rb`, and then run
+`bundle exec rake release`, which will create a git tag for the version,
+push git commits and tags, and push the `.gem`
+file to [rubygems.org](https://rubygems.org).
+After checking out the repo, run `bin/setup` to install dependencies.
+You can also run `bin/console` for an interactive prompt that
+will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## License
 

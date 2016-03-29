@@ -1,6 +1,6 @@
 require 'logger'
 
-module Todo
+module TodoCurses
   module Logger
     def self.included base
       base.extend(self)
@@ -15,7 +15,7 @@ module Todo
     end
 
     def logger
-      Todo::Logger.logger
+      TodoCurses::Logger.logger
     end
   end
 end

@@ -1,9 +1,9 @@
 require 'date'
 
-module Todo
+module TodoCurses
   class Task
     include Comparable
-    include Todo::Logger
+    include TodoCurses::Logger
 
     # The regular expression used to match contexts.
     def self.contexts_regex
@@ -40,7 +40,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new("(A) A high priority task!")
+    #   task = TodoCurses::Task.new("(A) A high priority task!")
     def initialize task
       @orig = task
       @completed_on = get_completed_date #orig.scan(self.class.done_regex)[1] ||= nil
@@ -54,7 +54,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "(A) @context +project Hello!"
+    #   task = TodoCurses::Task.new "(A) @context +project Hello!"
     #   task.orig #=> "(A) @context +project Hello!"
     attr_reader :orig
 
@@ -62,7 +62,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "(A) 2012-03-04 Task."
+    #   task = TodoCurses::Task.new "(A) 2012-03-04 Task."
     #   task.created_on
     #   #=> <Date: 2012-03-04 (4911981/2,0,2299161)>
     #
@@ -75,7 +75,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "x 2012-03-04 Task."
+    #   task = TodoCurses::Task.new "x 2012-03-04 Task."
     #   task.completed_on
     #   #=> <Date: 2012-03-04 (4911981/2,0,2299161)>
     #
@@ -88,7 +88,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "(A) This is a task. due:2012-03-04"
+    #   task = TodoCurses::Task.new "(A) This is a task. due:2012-03-04"
     #   task.due_on
     #   #=> <Date: 2012-03-04 (4911981/2,0,2299161)>
     #
@@ -101,10 +101,10 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "(A) Some task."
+    #   task = TodoCurses::Task.new "(A) Some task."
     #   task.priority #=> "A"
     #
-    #   task = Todo::Task.new "Some task."
+    #   task = TodoCurses::Task.new "Some task."
     #   task.priority #=> nil
     attr_reader :priority
 
@@ -129,7 +129,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "(A) @test Testing!"
+    #   task = TodoCurses::Task.new "(A) @test Testing!"
     #   task.text #=> "Testing!"
     def text
       @text ||= orig.
@@ -146,7 +146,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "(A) 2012-03-04 Task."
+    #   task = TodoCurses::Task.new "(A) 2012-03-04 Task."
     #   task.date
     #   #=> <Date: 2012-03-04 (4911981/2,0,2299161)>
     #
@@ -165,7 +165,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new("This task is overdue! due:#{Date.today - 1}")
+    #   task = TodoCurses::Task.new("This task is overdue! due:#{Date.today - 1}")
     #   task.overdue?
     #   #=> true
     def overdue?
@@ -177,11 +177,11 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "x 2012-12-08 Task."
+    #   task = TodoCurses::Task.new "x 2012-12-08 Task."
     #   task.done?
     #   #=> true
     #
-    #   task = Todo::Task.new "Task."
+    #   task = TodoCurses::Task.new "Task."
     #   task.done?
     #   #=> false
     def done?
@@ -192,7 +192,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "2012-12-08 Task."
+    #   task = TodoCurses::Task.new "2012-12-08 Task."
     #   task.done?
     #   #=> false
     #
@@ -212,7 +212,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "x 2012-12-08 2012-03-04 Task."
+    #   task = TodoCurses::Task.new "x 2012-12-08 2012-03-04 Task."
     #   task.done?
     #   #=> true
     #
@@ -232,7 +232,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "x 2012-12-08 Task."
+    #   task = TodoCurses::Task.new "x 2012-12-08 Task."
     #   task.done?
     #   #=> true
     #
@@ -251,7 +251,7 @@ module Todo
     #
     # Example:
     #
-    #   task = Todo::Task.new "(A) 2012-12-08 Task"
+    #   task = TodoCurses::Task.new "(A) 2012-12-08 Task"
     #   task.to_s
     #   #=> "(A) 2012-12-08 Task"
     def to_s
@@ -268,8 +268,8 @@ module Todo
     #
     # Example:
     #
-    #   task1 = Todo::Task.new "(A) Priority A."
-    #   task2 = Todo::Task.new "(B) Priority B."
+    #   task1 = TodoCurses::Task.new "(A) Priority A."
+    #   task2 = TodoCurses::Task.new "(B) Priority B."
     #
     #   task1 > task2
     #   # => true
