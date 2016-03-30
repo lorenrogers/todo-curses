@@ -31,7 +31,14 @@ Grab the gem:
 Then you'll probably want to make an alias in your .\*rc file. Here's
 mine:
 
-    alias tt#"todo-curses \~/dev/todo/todo.txt"
+    alias t="todo.sh"
+    alias tt="vim ~/dev/todo/todo.txt"
+    alias ts="cd ~/dev/todo;./save.sh;cd -;t archive"
+    alias ttt="todo-curses ~/dev/todo/todo.txt"
+
+This gives three ways to interact with the todo.txt file, depending
+on the task at hand. Because todo-curses is still in the experimental
+phase, I use Vim for my day-to-day work.
 
 ## Current features
 
