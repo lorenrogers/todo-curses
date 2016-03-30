@@ -4,5 +4,5 @@ Feature: My bootstrapped app kinda works
   So I don't have to do it myself
 
   Scenario: App just runs
-    When I run `TodoCurses`
+    When I run `todo-curses`
     Then the exit status should be 0
