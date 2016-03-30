@@ -23,6 +23,7 @@ def dump_load_path
     puts "Found in #{path}"
   end
 end
+
 require 'bundler'
 require 'rake/clean'
 
@@ -38,11 +39,9 @@ include Rake::DSL
 
 Bundler::GemHelper.install_tasks
 
-
 Rake::TestTask.new do |t|
-  t.pattern = 'test/tc_*.rb'
+  t.pattern = 'test/*.rb'
 end
-
 
 CUKE_RESULTS = 'results.html'
 CLEAN << CUKE_RESULTS
@@ -52,19 +51,11 @@ Cucumber::Rake::Task.new(:features) do |t|
 end
 
 Rake::RDocTask.new do |rd|
-
   rd.main = "README.rdoc"
-
   rd.rdoc_files.include("README.rdoc","lib/**/*.rb","bin/**/*")
 end
 
 task :default => [:test,:features]
-
-# Run the test application
-desc 'run'
-task :run do
-  sh 'bundle exec bin/todo-curses list todo.txt'
-end
 
 # Reset the testing todo.txt file, if you have one.
 desc 'reset'
@@ -77,5 +68,3 @@ desc 'Lint Ruby'
 RuboCop::RakeTask.new(:rubocop) do |t|
   t.patterns = ['bin/**/*.rb', 'lib/**/*.rb']
 end
-
-task default: :run
