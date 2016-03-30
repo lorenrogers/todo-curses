@@ -31,7 +31,7 @@ Grab the gem:
 Then you'll probably want to make an alias in your .\*rc file. Here's
 mine:
 
-    alias tt#"todo-curses list \~/dev/todo/todo.txt"
+    alias tt#"todo-curses \~/dev/todo/todo.txt"
 
 ## Current features
 
@@ -43,53 +43,6 @@ mine:
 - Move priority down with `shift+j`
 - Move priority up with `shift+k`
 - Completed tasks are archived to done.txt on exit
-
-## Planned features
-
-- Safer file handling (confirmations, errors, etc.)
-- Use ctrl instead of shift for priority change
-- Color code priorities
-- Add a spacer between priority groups
-- Priority view with `ctrl+1`
-- Project view with `ctrl+2`
-- Strip out application wrapper; not needed
-- Prep for release as a gem
-- If no argument is given, open the default file. Default tbd.
-
-## Ideas for later
-
-- Shift+J: Cycle through displays (Priority, project, etc.)
-- F: filter tasks (free-text, one filter condition per line)
-- T: append text to selected tasks
-- O or Ctrl+O: open todo.txt file
-- C or Ctrl+N: new todo.txt file
-
-## Things not included
-
-- A: archive tasks
-- Ctrl+C: copy task to clipboard
-- Ctrl+Shift+C: copy task to edit field
-- Win+Alt+T: hide/unhide windows
-- 0: clear filter
-- 1-9: apply numbered filter preset
-
-## Keyboard shortcut ideas
-
-- N: new task
-- J: next task
-- K: prev task
-- X: toggle task completion
-- D or Del or Backspace: delete task (with confirmation)
-- E or F2: update task
-- I: set priority
-- . or F5: reload tasks from file
-- ?: show help
-- Shift+K: increase priority
-- Shift+J: decrease priority
-- Alt+Left/Right: clear priority
-- Ctrl+Alt+Up: increase due date by 1 day
-- Ctrl+Alt+Down: decrease due date by 1 day
-- Ctrl+Alt+Left/Right: remove due date
 
 ## Development
 
