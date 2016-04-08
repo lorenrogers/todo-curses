@@ -16,7 +16,8 @@ I'd been meaning to learn for a while.
 No doubt there's a ton of nasty code in here. I'm sure there's a lot
 that can be refactored; pull requests welcome!
 
-![Gem Version](https://badge.fury.io/rb/todo-curses.svg)
+![Gem Version](https://img.shields.io/gem/v/todo-curses.svg)
+![Total Gem Downloads](https://img.shields.io/gem/dt/todo-curses.svg)
 
 [Gem available on Rubygems.org](https://rubygems.org/gems/todo-curses)
 
