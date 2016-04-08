@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    todo-curses (0.0.4)
+    todo-curses (0.0.5)
       methadone (~> 1.9, >= 1.9.2)
       ncursesw (~> 1.4, >= 1.4.9)
       todo-txt (~> 0.7)
