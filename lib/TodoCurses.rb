@@ -1,11 +1,9 @@
-require 'TodoCurses/list.rb'
-require 'TodoCurses/logger.rb'
 require 'TodoCurses/view.rb'
 require 'TodoCurses/version.rb'
-require 'TodoCurses/task.rb'
+require 'todo-txt'
 
 module TodoCurses
-  include Logger
+  include Todo
 
   if ARGV.size != 1
     printf("usage: #{$PROGRAM_NAME} file\n")

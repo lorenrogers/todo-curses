@@ -116,14 +116,14 @@ module TodoCurses
     # Moves the current selection's priority up by one unless it is at Z.
     def priority_up
       item = @menu.current_item.user_object
-      item.priority_inc
+      item.priority_inc!
       save_list
     end
 
     # Moves the current selection's priority down by one unless it is at A.
     def priority_down
       item = @menu.current_item.user_object
-      item.priority_dec
+      item.priority_dec!
       save_list
     end
 

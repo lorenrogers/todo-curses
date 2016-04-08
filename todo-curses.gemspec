@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('aruba', '~> 0.14.1')
   spec.add_dependency('methadone', '~> 1.9', '>= 1.9.2')
   spec.add_dependency('ncursesw', '~> 1.4', '>= 1.4.9')
+  spec.add_dependency('todo-txt', '~> 0.7')
   spec.add_development_dependency('test-unit', '~> 3.1', '>= 3.1.8')
   spec.add_development_dependency('rubocop', '~> 0.39.0')
 end
