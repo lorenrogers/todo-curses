@@ -1,5 +1,6 @@
 require 'ncursesw'
 
+# Interactive application for handling todo.txt files
 module TodoCurses
   include Ncurses
 
@@ -7,40 +8,41 @@ module TodoCurses
   class View
     # Run the ncurses application
     def interact
-      while true
-        result = true
+      loop do
         c = Ncurses.getch
-        case c
-        when 'j'.ord # Move down
-          result = scroll_down
-        when 'k'.ord # Move up
-          result = scroll_up
-        when 'J'.ord # Decrease priority
-          result = priority_down
-        when 'K'.ord # Increase priority
-          result = priority_up
-        when 'x'.ord # Toggle complete
-          toggle_item_completion
-        when 'n'.ord # New item
-          new_item
-        when 'h'.ord # Scroll to top
-          while scroll_up
-          end
-        when 'l'.ord # Scroll to bottom
-          while scroll_down
-          end
-        when 'q'.ord
-          break
-        else
-          @screen.mvprintw(0, 0, "[unknown key `#{Ncurses.keyname(c)}'=#{c}] ")
-        end
-        Ncurses.beep unless result
+        break unless handle_character_input(c)
       end
       clean_done_tasks
       close_ncurses
     end
 
     private
+
+    # Maps methods to character inputs from Ncurses.
+    # @return [Boolean] false if application should exit.
+    #
+    # rubocop:disable Metrics/MethodLength
+    def handle_character_input(c)
+      case c
+      when 'q'.ord then return false
+      when 'j'.ord then scroll_down
+      when 'k'.ord then scroll_up
+      when 'J'.ord then priority_down
+      when 'K'.ord then priority_up
+      when 'x'.ord then toggle_item_completion
+      when 'n'.ord then new_item
+      when 'h'.ord then scroll_home
+      when 'l'.ord then scroll_end
+      else display_message(c)
+      end
+      true
+      # rubocop:enable Metrics/MethodLength
+    end
+
+    # Displays a message saying that the character was not recognized.
+    def display_message(c)
+      @screen.mvprintw(0, 0, "[unknown key `#{Ncurses.keyname(c)}'=#{c}] ")
+    end
 
     # Create a new fileviewer, and view the file.
     def initialize(filename)
@@ -60,6 +62,7 @@ module TodoCurses
 
     # Loads the given file as a todo.txt array. Sets the view to the top
     # and redraws the list view.
+    #
     # @param filename [String] path to the text file to be loaded
     def load_file(filename)
       @done_file = File.dirname(filename) + '/done.txt'
@@ -89,16 +92,15 @@ module TodoCurses
         current_selection = menu_item if item.to_s == last_selection.to_s
       end
 
-      # Build the final menu object
-      @menu = Ncurses::Menu::MENU.new items
-      @menu.set_menu_win(@screen)
-      @menu.set_menu_sub(@screen.derwin(@screen.getmaxx, @screen.getmaxy, 0, 0))
-      @menu.set_menu_format(@screen.getmaxy, 1)
+      display_main_menu(items, current_selection)
+    end
 
-      # Set dividers to non-interactive
-      @menu.menu_items.select { |i| i.user_object.nil? }.each do |divider|
-        divider.item_opts_off Ncurses::Menu::O_SELECTABLE
-      end
+    # Creates a menu and displays it on the screen.
+    #
+    # @param items [Array] the items to be shown.
+    # @param current_selection [Ncurses::Menu::ITEM] the current menu item.
+    def display_main_menu(items, current_selection)
+      @menu = build_menu(items)
 
       # Show the menu
       @screen.clear
@@ -109,8 +111,26 @@ module TodoCurses
       @menu.menu_driver(
         Ncurses::Menu::REQ_DOWN_ITEM) if @menu.current_item.user_object.nil?
 
-        # Refresh
-        @screen.refresh
+      # Refresh
+      @screen.refresh
+    end
+
+    # Builds the main display menu of todo.txt items.
+    #
+    # @param items [Array] the items to be shown in the list.
+    # @return [Ncurses::Menu::MENU] the final menu object to be shown.
+    def build_menu(items)
+      # Build the final menu object
+      menu = Ncurses::Menu::MENU.new items
+      menu.set_menu_win(@screen)
+      menu.set_menu_sub(@screen.derwin(@screen.getmaxx, @screen.getmaxy, 0, 0))
+      menu.set_menu_format(@screen.getmaxy, 1)
+
+      # Set dividers to non-interactive
+      menu.menu_items.select { |i| i.user_object.nil? }.each do |divider|
+        divider.item_opts_off Ncurses::Menu::O_SELECTABLE
+      end
+      menu
     end
 
     # Moves the current selection's priority up by one unless it is at Z.
@@ -132,14 +152,14 @@ module TodoCurses
     def scroll_up
       # Move to the next item if it's not the first in the list
       unless @menu.menu_items[0].user_object.nil? &&
-        @menu.current_item.item_index < 2
+             @menu.current_item.item_index < 2
         result = @menu.menu_driver(Ncurses::Menu::REQ_UP_ITEM)
       end
       # Move to the next item if it's not a divider
       result = @menu.menu_driver(
         Ncurses::Menu::REQ_UP_ITEM) unless @menu.current_item.user_object
-        return true if result == Ncurses::Menu::E_OK
-        false
+      return true if result == Ncurses::Menu::E_OK
+      false
     end
 
     # Scroll the display down by one line
@@ -148,8 +168,20 @@ module TodoCurses
       result = @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
       result = @menu.menu_driver(
         Ncurses::Menu::REQ_DOWN_ITEM) unless @menu.current_item.user_object
-        return true if result == Ncurses::Menu::E_OK
-        false
+      return true if result == Ncurses::Menu::E_OK
+      false
+    end
+
+    # Scrolls to the top of the list
+    def scroll_home
+      while scroll_up
+      end
+    end
+
+    # Scrolls to the end of the list
+    def scroll_end
+      while scroll_down
+      end
     end
 
     # Collects a new todo item from the user and saves
@@ -254,7 +286,8 @@ module TodoCurses
           form.form_driver ch # If this is a normal character, it gets Printed
         end
       end
-      form.form_driver Ncurses::Form::REQ_NEXT_FIELD # Request next to set 0 buffer in field
+      # Request next to set 0 buffer in field
+      form.form_driver Ncurses::Form::REQ_NEXT_FIELD
       Ncurses::Form.field_buffer(field, 0)
     end
   end
