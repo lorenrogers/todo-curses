@@ -1,0 +1,35 @@
+(A) 2016-03-09 Fail cleanly if the todo.txt file does not exist +Feature
+(A) 2016-03-09 Page down should actually work +Feature
+(A) 2016-03-09 Refactor main viewer file into proper size +Refactor
+(B) 2016-03-09 Ability to delete a task +Feature
+(B) 2016-03-09 Ability to edit a given task +Feature
+(B) 2016-03-09 Add a spacer between priority groups +Feature
+(B) 2016-03-09 Basic color display +Feature
+(B) 2016-03-09 Escape should close the new item window and delete anything in the buffer +Feature
+(B) 2016-03-09 Highlight newly created items +Feature
+(B) 2016-03-09 Long lines should wrap at edge of display +Feature
+(B) 2016-03-09 Set up Hound integration +ProjectManagement
+(B) 2016-03-09 Show help dialog +Feature
+(B) 2016-04-01 Option to enable/disable autosave after each item edit +Feature
+(B) 2016-04-09 Set up Travis CI for Gem releases and testing +PrjectManagement
+(C) 2016-03-09 Catch ctrl+c and prompt for a clean exit +Feature
+(C) 2016-03-09 Cycle through displays (Priority, project, etc.) +Feature
+(C) 2016-03-09 F: filter tasks (free-text, one filter condition per line) +Feature
+(C) 2016-03-09 Possible memory leak +Refactor
+(C) 2016-03-09 Safer file handling +Feature
+(C) 2016-03-09 Save a copy of the file with a ~ extension +Feature
+(D) 2016-03-08 Confirm quit and clean done tasks +Feature
+(D) 2016-03-09 Ability to copy items to the clipboard +Feature
+(D) 2016-03-09 Ability to duplicate a task into the edit field +Feature
+(E) 2016-03-07 Ability to create new todo.txt files +Feature
+(E) 2016-03-07 Ability to generate a default dotfile +Feature
+(E) 2016-03-09 Ability to archive completed tasks within the app +Feature
+(E) 2016-03-09 Ability to change files +Feature
+(E) 2016-03-09 Ability to move items between lists +Feature
+(E) 2016-03-09 Ability to undo last action +Feature
+(E) 2016-03-09 Advanced filtering settings / memory +Feature
+(E) 2016-03-09 Change current file +Feature
+(E) 2016-03-09 Configuration with a dotfile +Feature
+(E) 2016-03-09 Create new file +Feature
+(E) 2016-03-09 Set default to show help text if no config file is set up +Feature
+x 2016-04-09 2016-03-09 Remove the "list" argument -- not needed +Refactor
