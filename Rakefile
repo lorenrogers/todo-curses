@@ -38,10 +38,10 @@ def dump_load_path
 end
 
 # Creates a sample file for testing in /tmp.
-def reset_test_file
+def reset_test_file(todo_file='test/todo.txt')
   FileUtils.rm_rf '/tmp/todo-curses'
   FileUtils.mkdir '/tmp/todo-curses'
-  FileUtils.cp 'test/todo.txt', '/tmp/todo-curses/'
+  FileUtils.cp todo_file, '/tmp/todo-curses/'
 end
 
 Bundler::GemHelper.install_tasks
@@ -63,6 +63,13 @@ Rake::RDocTask.new do |rd|
 end
 
 task :default => [:test,:features]
+
+# Copies the roadmap file to /tmp and opens the app for it.
+desc 'roadmap'
+task :roadmap do
+  reset_test_file('project-management/todo.txt')
+  sh 'bundle exec bin/todo-curses /tmp/todo-curses/todo.txt'
+end
 
 # Reset the testing todo.txt file, if you have one.
 desc 'reset'
