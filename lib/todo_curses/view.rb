@@ -3,11 +3,12 @@ require 'todo-txt'
 
 # Interactive application for handling todo.txt files
 module TodoCurses
-  include Ncurses
   include Todo
 
   # A curses based todo.txt file viewer
   class View
+    include Ncurses
+
     # Run the ncurses application
     def interact
       loop do
@@ -23,6 +24,7 @@ module TodoCurses
     # @return [Boolean] false if application should exit.
     #
     # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def handle_character_input(c)
       case c
       when 'q'.ord then return false
@@ -38,6 +40,7 @@ module TodoCurses
       end
       true
       # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/AbcSize
     end
 
     # Displays a message saying that the character was not recognized.
@@ -275,25 +278,21 @@ module TodoCurses
 
     # Captures text input into a form and returns the resulting string.
     # @param window [Window] the form window
-    # @param form [FORM] the form to be captured
-    # @param field [FIELD] the form to be captured
+    # @param form [Ncurses::FORM] the form to be captured
+    # @param field [Ncurses::FIELD] the form to be captured
     # @return [String] the captured input
     def capture_text_field_input(window, form, field)
       while (ch = window.getch) != 13 # return is ascii 13
         case ch
-        when Ncurses::KEY_LEFT
-          form.form_driver Ncurses::Form::REQ_PREV_CHAR
-        when Ncurses::KEY_RIGHT
-          form.form_driver Ncurses::Form::REQ_NEXT_CHAR
-        when Ncurses::KEY_BACKSPACE
-          form.form_driver Ncurses::Form::REQ_DEL_PREV
-        else
-          form.form_driver ch # If this is a normal character, it gets Printed
+        when KEY_LEFT then form.form_driver Form::REQ_PREV_CHAR
+        when KEY_RIGHT then form.form_driver Form::REQ_NEXT_CHAR
+        when KEY_BACKSPACE then form.form_driver Form::REQ_DEL_PREV
+        else form.form_driver ch # If it's a normal character, print it
         end
       end
       # Request next to set 0 buffer in field
-      form.form_driver Ncurses::Form::REQ_NEXT_FIELD
-      Ncurses::Form.field_buffer(field, 0)
+      form.form_driver Form::REQ_NEXT_FIELD
+      Form.field_buffer(field, 0)
     end
   end
 end
