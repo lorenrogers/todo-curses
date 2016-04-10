@@ -25,6 +25,7 @@ module TodoCurses
     #
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
     def handle_character_input(c)
       case c
       when 'q'.ord then return false
@@ -41,6 +42,7 @@ module TodoCurses
       true
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/CyclomaticComplexity
     end
 
     # Displays a message saying that the character was not recognized.
