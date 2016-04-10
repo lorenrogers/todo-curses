@@ -213,7 +213,11 @@ module TodoCurses
       my_form_win.mvaddstr(4, 2, 'New item')
       my_form_win.wrefresh
 
+      # rubocop:disable Style/ColonMethodCall
+      # Ncurses seems to require that this is called from the
+      # class, rather than the instance.
       Ncurses::stdscr.refresh
+      # rubocop:enable Style/ColonMethodCall
 
       new_item_text = capture_text_field_input(my_form_win, my_form, field)
 

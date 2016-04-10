@@ -2,7 +2,7 @@
 
 require 'optparse'
 require 'methadone'
-require 'TodoCurses'
+require 'todo_curses'
 
 class App
   include Methadone::Main

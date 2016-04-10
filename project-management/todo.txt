@@ -1,6 +1,7 @@
 (A) 2016-03-09 Fail cleanly if the todo.txt file does not exist +Feature
 (A) 2016-03-09 Page down should actually work +Feature
 (A) 2016-03-09 Refactor main viewer file into proper size +Refactor
+(A) 2016-04-10 Refactor to clean Rubocop warnings +Refactor
 (B) 2016-03-09 Ability to delete a task +Feature
 (B) 2016-03-09 Ability to edit a given task +Feature
 (B) 2016-03-09 Add a spacer between priority groups +Feature
