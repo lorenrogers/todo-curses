@@ -1,16 +1,17 @@
 require 'ncursesw'
+require 'todo-txt'
 
 # Interactive application for handling todo.txt files
 module TodoCurses
   include Ncurses
+  include Todo
 
   # A curses based todo.txt file viewer
   class View
     # Run the ncurses application
     def interact
       loop do
-        c = Ncurses.getch
-        break unless handle_character_input(c)
+        break unless handle_character_input(Ncurses.getch)
       end
       clean_done_tasks
       close_ncurses
