@@ -15,10 +15,13 @@ I'd been meaning to learn for a while.
 
 ![Gem Version](https://img.shields.io/gem/v/todo-curses.svg)
 ![Total Gem Downloads](https://img.shields.io/gem/dt/todo-curses.svg)
+[![Build Status](https://travis-ci.org/lorentrogers/todo-curses.svg?branch=master)](https://travis-ci.org/lorentrogers/todo-curses)
 
 [Gem available on Rubygems.org](https://rubygems.org/gems/todo-curses)
 
 [Source on github.com](https://github.com/lorentrogers/todo-curses)
+
+Supports Ruby >= `2.0.0`
 
 ## Installation
 
