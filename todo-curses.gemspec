@@ -7,14 +7,17 @@ Gem::Specification.new do |spec|
   spec.name          = 'todo-curses'
   spec.license       = 'GPL-3.0'
   spec.version       = TodoCurses::VERSION
-  spec.authors       = ['Loren Rogers']
-  spec.email         = ['loren@lorentrogers.com']
-  spec.summary       = %q{An interactive terminal application for managing todo.txt files.}
+  spec.authors       = 'Loren Rogers'
+  spec.email         = 'loren@lorentrogers.com'
+  spec.summary       = 'An interactive terminal application for ' \
+                       'managing todo.txt files.'
   spec.homepage      = 'https://github.com/lorentrogers/todo-curses'
-  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  spec.files         = `git ls-files -z`.split("\x0").reject { |f|
+    f.match(%r{^(test|spec|features)/})
+  }
   spec.bindir        = 'bin'
   spec.executables   = 'todo-curses'
-  spec.require_paths = ['lib']
+  spec.require_paths = 'lib'
   spec.required_ruby_version = '>= 2.0'
 
   spec.add_development_dependency 'bundler', '~> 1.10', '>= 1.10.6'

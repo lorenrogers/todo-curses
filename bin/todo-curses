@@ -4,6 +4,7 @@ require 'optparse'
 require 'methadone'
 require 'todo_curses'
 
+# The main container for the CLI application
 class App
   include Methadone::Main
   include Methadone::CLILogging
@@ -17,7 +18,7 @@ class App
   arg :todo_path, 'Path to the todo.txt file'
   description 'An interactive curses-based editor for todo.txt files'
   version TodoCurses::VERSION
-  use_log_level_option :toggle_debug_on_signal => 'USR1'
+  use_log_level_option toggle_debug_on_signal: 'USR1'
 
   go!
 end
