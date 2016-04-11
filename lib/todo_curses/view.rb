@@ -74,38 +74,54 @@ module TodoCurses
       @done_file = File.dirname(filename) + '/done.txt'
       @list = TodoCurses::List.new filename
       @list.sort! { |x, y| y <=> x } # Reverse sort
+
+      items = build_menu_item_list(@list)
+      display_main_menu(items)
+    end
+
+    # Builds the curses menu
+    # @return [Array] menu items to be displayed
+    def build_menu_item_list(list)
       items = []
       last_priority = nil
-      last_selection = @menu.current_item.user_object if @menu
-      current_selection = nil
 
-      # Build the menu item list
-      @list.each do |item|
+      list.each do |item|
         # Insert dividers on priority change
         if item.priority != last_priority
-          divider_priority = item.priority.nil? ? 'N/A' : item.priority.to_s
-          divider = Ncurses::Menu::ITEM.new(divider_priority, '')
-          items << divider
+          items << build_priority_divider(item.priority)
           last_priority = item.priority
         end
-
-        # Build the todo menu item
-        menu_item = Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
-        menu_item.user_object = item
-        items << menu_item
-
-        # Set the current selection
-        current_selection = menu_item if item.to_s == last_selection.to_s
+        items << build_menu_item(item)
       end
 
-      display_main_menu(items, current_selection)
+      items
+    end
+
+    # Creates a new Ncurses menu item for the given object
+    #
+    # @param item [TodoCurses::Task] the item to be added
+    # @return [Ncurses::Menu::ITEM] the new menu item
+    def build_menu_item(item)
+      menu_item = Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
+      menu_item.user_object = item
+      menu_item
+    end
+
+    # Builds a divider for the menu with the given priority label.
+    # If the item has no priority, it uses "N/A" for the label.
+    # @param priority [Char] the priority label for the divider to insert
+    # @return [Ncurses::Menu::ITEM] the menu item to insert
+    def build_priority_divider(priority)
+      divider_priority = priority.nil? ? 'N/A' : priority.to_s
+      Ncurses::Menu::ITEM.new(divider_priority, '')
     end
 
     # Creates a menu and displays it on the screen.
     #
     # @param items [Array] the items to be shown.
-    # @param current_selection [Ncurses::Menu::ITEM] the current menu item.
-    def display_main_menu(items, current_selection)
+    def display_main_menu(items)
+      current_selection_object = @menu.current_item.user_object if @menu
+
       @menu = build_menu(items)
 
       # Show the menu
@@ -113,12 +129,25 @@ module TodoCurses
       @menu.post_menu
 
       # Set selection position
-      @menu.set_current_item current_selection if current_selection
-      @menu.menu_driver(
-        Ncurses::Menu::REQ_DOWN_ITEM) if @menu.current_item.user_object.nil?
+      set_menu_selection_position(items, current_selection_object)
 
       # Refresh
       @screen.refresh
+    end
+
+    # Sets the main menu to the given object's position, if it exists.
+    # If the resulting selection is on a divider, it moves to the
+    # next item.
+    #
+    # @param items [Array] the list of menu items
+    # @param current_selection_object [Todo::Task] the object of the current
+    # selection
+    def set_menu_selection_position(items, current_selection_object)
+      index = items.index { |x| x.user_object == current_selection_object }
+      @menu.set_current_item items[index] if index
+      if @menu.current_item.user_object.nil?
+        @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
+      end
     end
 
     # Builds the main display menu of todo.txt items.
@@ -193,30 +222,11 @@ module TodoCurses
     # Collects a new todo item from the user and saves
     # it to the text file.
     def new_item
-      field = Ncurses::Form::FIELD.new(1, @screen.getmaxx - 1, 2, 1, 0, 0)
-      field.set_field_back(Ncurses::A_UNDERLINE)
-      fields = [field]
+      fields = [Ncurses::Form::FIELD.new(1, @screen.getmaxx - 1, 2, 1, 0, 0)]
+      fields.first.set_field_back(Ncurses::A_UNDERLINE)
       my_form = Ncurses::Form::FORM.new(fields)
-      my_form.user_object = 'My identifier'
 
-      # Calculate the area required for the form
-      rows = []
-      cols = []
-      my_form.scale_form(rows, cols)
-
-      # Create the window to be associated with the form
-      my_form_win = Ncurses::WINDOW.new(rows[0] + 3, cols[0] + 14, 1, 1)
-      my_form_win.keypad(TRUE)
-
-      # Set main window and sub window
-      my_form.set_form_win(my_form_win)
-      my_form.set_form_sub(my_form_win.derwin(rows[0], cols[0], 2, 12))
-
-      my_form.post_form
-
-      # Print field types
-      my_form_win.mvaddstr(4, 2, 'New item')
-      my_form_win.wrefresh
+      my_form_win = show_new_item_form(my_form)
 
       # rubocop:disable Style/ColonMethodCall
       # Ncurses seems to require that this is called from the
@@ -224,20 +234,57 @@ module TodoCurses
       Ncurses::stdscr.refresh
       # rubocop:enable Style/ColonMethodCall
 
-      new_item_text = capture_text_field_input(my_form_win, my_form, field)
+      save_new_item(capture_text_field_input(my_form_win,
+                                             my_form, fields.first))
+      clean_form(my_form, fields)
+    end
 
-      # Save results
-      save_new_item(new_item_text)
+    # Displays the form in the main window
+    #
+    # @return [Ncurses::WINDOW] the window showing the new form
+    def show_new_item_form(my_form)
+      # Calculate the area required for the form
+      my_form.scale_form(rows = [], cols = [])
 
-      # Clean up
-      my_form.unpost_form
-      my_form.free_form
+      # Create the window to be associated with the form
 
-      field.free_field
-      # fields.each {|f| f.free_field}
+      my_form_win = build_form_win(rows, cols)
+
+      # Set main window and sub window
+      my_form.set_form_win(my_form_win)
+      my_form.set_form_sub(my_form_win.derwin(rows[0], cols[0], 2, 12))
+      my_form.post_form
+
+      # Print field types
+      my_form_win.mvaddstr(4, 2, 'New item')
+      my_form_win.wrefresh
+
+      my_form_win
+    end
+
+    # Creates a new input window
+    #
+    # @param rows [Array] rows to include
+    # @param cols [Array] columns to include
+    # @return [Ncurses::WINDOW] the new window
+    def build_form_win(rows, cols)
+      form_win = Ncurses::WINDOW.new(rows[0] + 3, cols[0] + 14, 1, 1)
+      form_win.keypad(TRUE)
+      form_win
+    end
+
+    # Unposts the form and frees memory for the form and fields
+    #
+    # @param form [Ncurses::FORM] the form to be cleaned
+    # @param fields [Array] an array of form fields to be cleared
+    def clean_form(form, fields)
+      form.unpost_form
+      form.free_form
+      fields.each(&:free_field)
     end
 
     # Adds a new item to the list and saves the file
+    #
     # @param task [String] the task to be added
     # @return [TodoCurses::List] the updated list
     def save_new_item(task)
@@ -262,12 +309,19 @@ module TodoCurses
     # Saves done tasks to done.txt and removes them from todo.txt
     def clean_done_tasks
       done_tasks = @list.select { |task| !task.completed_on.nil? }
+      write_done_file(done_tasks)
+      remaining_tasks = @list.select { |task| task.completed_on.nil? }
+      File.open(@list.path, 'w') { |file| file << remaining_tasks.join("\n") }
+    end
+
+    # Writes the given tasks to the done.txt file.
+    #
+    # @param done_tasks [TodoCurses::Task] the tasks to write to the file
+    def write_done_file(done_tasks)
       File.open(@done_file, 'a') do |file|
         file << "\n"
         file << done_tasks.join("\n")
       end
-      remaining_tasks = @list.select { |task| task.completed_on.nil? }
-      File.open(@list.path, 'w') { |file| file << remaining_tasks.join("\n") }
     end
 
     # put the screen back in its normal state
@@ -279,6 +333,7 @@ module TodoCurses
     end
 
     # Captures text input into a form and returns the resulting string.
+    #
     # @param window [Window] the form window
     # @param form [Ncurses::FORM] the form to be captured
     # @param field [Ncurses::FIELD] the form to be captured
