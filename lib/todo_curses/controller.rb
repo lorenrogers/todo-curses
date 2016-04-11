@@ -6,7 +6,7 @@ module TodoCurses
   include Todo
 
   # A curses based todo.txt file viewer
-  class View
+  class Controller
     include Ncurses
 
     # Run the ncurses application
@@ -57,13 +57,16 @@ module TodoCurses
       interact
     end
 
-    # Perform the curses setup
-    def init_curses
-      @screen = Ncurses.initscr
-      Ncurses.nonl
-      Ncurses.cbreak
-      Ncurses.noecho
-      @screen.scrollok(true)
+    # Scrolls to the top of the list
+    def scroll_home
+      while scroll_up
+      end
+    end
+
+    # Scrolls to the end of the list
+    def scroll_end
+      while scroll_down
+      end
     end
 
     # Loads the given file as a todo.txt array. Sets the view to the top
@@ -77,6 +80,56 @@ module TodoCurses
 
       items = build_menu_item_list(@list)
       display_main_menu(items)
+    end
+
+    # Adds a new item to the list and saves the file
+    #
+    # @param task [String] the task to be added
+    # @return [TodoCurses::List] the updated list
+    def save_new_item(task)
+      @list << TodoCurses::Task.new(task)
+      save_list
+      @list
+    end
+
+    # Saves the current state of the list. Overrides the current file.
+    # Reloads the newly saved file.
+    def save_list
+      File.open(@list.path, 'w') { |file| file << @list.join("\n") }
+      load_file @list.path
+    end
+
+    # Marks the currently selected menu item as complete and saves the list.
+    def toggle_item_completion
+      @menu.current_item.user_object.toggle!
+      save_list
+    end
+
+    # Saves done tasks to done.txt and removes them from todo.txt
+    def clean_done_tasks
+      done_tasks = @list.select { |task| !task.completed_on.nil? }
+      write_done_file(done_tasks)
+      remaining_tasks = @list.select { |task| task.completed_on.nil? }
+      File.open(@list.path, 'w') { |file| file << remaining_tasks.join("\n") }
+    end
+
+    # Writes the given tasks to the done.txt file.
+    #
+    # @param done_tasks [TodoCurses::Task] the tasks to write to the file
+    def write_done_file(done_tasks)
+      File.open(@done_file, 'a') do |file|
+        file << "\n"
+        file << done_tasks.join("\n")
+      end
+    end
+
+    # Perform the curses setup
+    def init_curses
+      @screen = Ncurses.initscr
+      Ncurses.nonl
+      Ncurses.cbreak
+      Ncurses.noecho
+      @screen.scrollok(true)
     end
 
     # Builds the curses menu
@@ -207,18 +260,6 @@ module TodoCurses
       false
     end
 
-    # Scrolls to the top of the list
-    def scroll_home
-      while scroll_up
-      end
-    end
-
-    # Scrolls to the end of the list
-    def scroll_end
-      while scroll_down
-      end
-    end
-
     # Collects a new todo item from the user and saves
     # it to the text file.
     def new_item
@@ -281,47 +322,6 @@ module TodoCurses
       form.unpost_form
       form.free_form
       fields.each(&:free_field)
-    end
-
-    # Adds a new item to the list and saves the file
-    #
-    # @param task [String] the task to be added
-    # @return [TodoCurses::List] the updated list
-    def save_new_item(task)
-      @list << TodoCurses::Task.new(task)
-      save_list
-      @list
-    end
-
-    # Saves the current state of the list. Overrides the current file.
-    # Reloads the newly saved file.
-    def save_list
-      File.open(@list.path, 'w') { |file| file << @list.join("\n") }
-      load_file @list.path
-    end
-
-    # Marks the currently selected menu item as complete and saves the list.
-    def toggle_item_completion
-      @menu.current_item.user_object.toggle!
-      save_list
-    end
-
-    # Saves done tasks to done.txt and removes them from todo.txt
-    def clean_done_tasks
-      done_tasks = @list.select { |task| !task.completed_on.nil? }
-      write_done_file(done_tasks)
-      remaining_tasks = @list.select { |task| task.completed_on.nil? }
-      File.open(@list.path, 'w') { |file| file << remaining_tasks.join("\n") }
-    end
-
-    # Writes the given tasks to the done.txt file.
-    #
-    # @param done_tasks [TodoCurses::Task] the tasks to write to the file
-    def write_done_file(done_tasks)
-      File.open(@done_file, 'a') do |file|
-        file << "\n"
-        file << done_tasks.join("\n")
-      end
     end
 
     # put the screen back in its normal state

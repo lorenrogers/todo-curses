@@ -11,7 +11,7 @@ class App
   include TodoCurses
 
   main do |todo_path|
-    TodoCurses::View.new todo_path
+    TodoCurses::Controller.new todo_path
   end
 
   arg :todo_path, 'Path to the todo.txt file'
