@@ -60,7 +60,7 @@ module TodoCurses
       when 'n'.ord then @view.new_item
       when 'h'.ord then scroll_home
       when 'l'.ord then scroll_end
-      else display_message(c)
+      else @view.display_message(c)
       end
       true
       # rubocop:enable Metrics/MethodLength
@@ -70,18 +70,20 @@ module TodoCurses
 
     # Toggles completion for the currently selected item in the menu
     def toggle_item_completion
-      @view.menu.current_item.user_object.toggle!
+      current_item = @view.menu.current_item.user_object
+      current_item.toggle!
+      @view.menu.current_item
     end
 
     # Scrolls to the top of the list
     def scroll_home
-      while scroll_up
+      while @view.scroll_up
       end
     end
 
     # Scrolls to the end of the list
     def scroll_end
-      while scroll_down
+      while @view.scroll_down
       end
     end
 

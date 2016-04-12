@@ -5,65 +5,14 @@ module TodoCurses
   class View
     include Ncurses
 
+    attr_accessor :menu
+
     # @param file [TodoCurses::TodoFile] the file to be shown
     # @param screen [Ncurses.initscr] the ncurses display to use
     def initialize(file, screen)
       @screen = screen
       items = build_menu_item_list(file.list)
       display_main_menu(items)
-    end
-
-    # Builds a divider for the menu with the given priority label.
-    # If the item has no priority, it uses "N/A" for the label.
-    # @param priority [Char] the priority label for the divider to insert
-    # @return [Ncurses::Menu::ITEM] the menu item to insert
-    def build_priority_divider(priority)
-      divider_priority = priority.nil? ? 'N/A' : priority.to_s
-      Ncurses::Menu::ITEM.new(divider_priority, '')
-    end
-
-    # Creates a new Ncurses menu item for the given object
-    #
-    # @param item [TodoCurses::Task] the item to be added
-    # @return [Ncurses::Menu::ITEM] the new menu item
-    def build_menu_item(item)
-      menu_item = Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
-      menu_item.user_object = item
-      menu_item
-    end
-
-    # Creates a menu and displays it on the screen.
-    #
-    # @param items [Array] the items to be shown.
-    def display_main_menu(items)
-      current_selection_object = @menu.current_item.user_object if @menu
-
-      @menu = build_menu(items)
-
-      # Show the menu
-      @screen.clear
-      @menu.post_menu
-
-      # Set selection position
-      set_menu_selection_position(items, current_selection_object)
-
-      # Refresh
-      @screen.refresh
-    end
-
-    # Sets the main menu to the given object's position, if it exists.
-    # If the resulting selection is on a divider, it moves to the
-    # next item.
-    #
-    # @param items [Array] the list of menu items
-    # @param current_selection_object [Todo::Task] the object of the current
-    # selection
-    def set_menu_selection_position(items, current_selection_object)
-      index = items.index { |x| x.user_object == current_selection_object }
-      @menu.set_current_item items[index] if index
-      if @menu.current_item.user_object.nil?
-        @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
-      end
     end
 
     # Displays a message saying that the character was not recognized.
@@ -119,6 +68,59 @@ module TodoCurses
     end
 
     private
+
+    # Builds a divider for the menu with the given priority label.
+    # If the item has no priority, it uses "N/A" for the label.
+    # @param priority [Char] the priority label for the divider to insert
+    # @return [Ncurses::Menu::ITEM] the menu item to insert
+    def build_priority_divider(priority)
+      divider_priority = priority.nil? ? 'N/A' : priority.to_s
+      Ncurses::Menu::ITEM.new(divider_priority, '')
+    end
+
+    # Creates a new Ncurses menu item for the given object
+    #
+    # @param item [TodoCurses::Task] the item to be added
+    # @return [Ncurses::Menu::ITEM] the new menu item
+    def build_menu_item(item)
+      menu_item = Ncurses::Menu::ITEM.new(item.to_s, '') # name, description
+      menu_item.user_object = item
+      menu_item
+    end
+
+    # Creates a menu and displays it on the screen.
+    #
+    # @param items [Array] the items to be shown.
+    def display_main_menu(items)
+      current_selection_object = @menu.current_item.user_object if @menu
+
+      @menu = build_menu(items)
+
+      # Show the menu
+      @screen.clear
+      @menu.post_menu
+
+      # Set selection position
+      set_menu_selection_position(items, current_selection_object)
+
+      # Refresh
+      @screen.refresh
+    end
+
+    # Sets the main menu to the given object's position, if it exists.
+    # If the resulting selection is on a divider, it moves to the
+    # next item.
+    #
+    # @param items [Array] the list of menu items
+    # @param current_selection_object [Todo::Task] the object of the current
+    # selection
+    def set_menu_selection_position(items, current_selection_object)
+      index = items.index { |x| x.user_object == current_selection_object }
+      @menu.set_current_item items[index] if index
+      if @menu.current_item.user_object.nil?
+        @menu.menu_driver(Ncurses::Menu::REQ_DOWN_ITEM)
+      end
+    end
 
     # Builds the curses menu
     #
@@ -200,14 +202,6 @@ module TodoCurses
       form.unpost_form
       form.free_form
       fields.each(&:free_field)
-    end
-
-    # put the screen back in its normal state
-    def close_ncurses
-      Ncurses.echo
-      Ncurses.nocbreak
-      Ncurses.nl
-      Ncurses.endwin
     end
 
     # Captures text input into a form and returns the resulting string.
