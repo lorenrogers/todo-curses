@@ -1,3 +1,5 @@
 require 'todo_curses/controller'
+require 'todo_curses/view'
+require 'todo_curses/todo_file'
 require 'todo_curses/version'
 require 'todo-txt'
