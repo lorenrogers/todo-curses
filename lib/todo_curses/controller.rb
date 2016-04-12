@@ -11,9 +11,27 @@ module TodoCurses
 
     # Create a new fileviewer, and view the file.
     def initialize(filename)
+      init_curses
       @file = TodoFile.new(filename)
-      @view = View.new(@file)
+      @view = View.new(@file, @screen)
       interact
+    end
+
+    # Perform the curses setup
+    def init_curses
+      @screen = Ncurses.initscr
+      Ncurses.nonl
+      Ncurses.cbreak
+      Ncurses.noecho
+      @screen.scrollok(true)
+    end
+
+    # put the screen back in its normal state
+    def close_ncurses
+      Ncurses.echo
+      Ncurses.nocbreak
+      Ncurses.nl
+      Ncurses.endwin
     end
 
     # Run the ncurses application
@@ -21,7 +39,7 @@ module TodoCurses
       loop do
         break unless handle_character_input(Ncurses.getch)
       end
-      clean_done_tasks
+      @file.clean_done_tasks # TODO: Break this out into explicit action
       close_ncurses
     end
 
@@ -34,12 +52,12 @@ module TodoCurses
     def handle_character_input(c)
       case c
       when 'q'.ord then return false
-      when 'j'.ord then scroll_down
-      when 'k'.ord then scroll_up
+      when 'j'.ord then @view.scroll_down
+      when 'k'.ord then @view.scroll_up
       when 'J'.ord then priority_down
       when 'K'.ord then priority_up
       when 'x'.ord then toggle_item_completion
-      when 'n'.ord then new_item
+      when 'n'.ord then @view.new_item
       when 'h'.ord then scroll_home
       when 'l'.ord then scroll_end
       else display_message(c)

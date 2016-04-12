@@ -6,8 +6,9 @@ module TodoCurses
     include Ncurses
 
     # @param file [TodoCurses::TodoFile] the file to be shown
-    def initialize(file)
-      init_curses
+    # @param screen [Ncurses.initscr] the ncurses display to use
+    def initialize(file, screen)
+      @screen = screen
       items = build_menu_item_list(file.list)
       display_main_menu(items)
     end
@@ -118,15 +119,6 @@ module TodoCurses
     end
 
     private
-
-    # Perform the curses setup
-    def init_curses
-      @screen = Ncurses.initscr
-      Ncurses.nonl
-      Ncurses.cbreak
-      Ncurses.noecho
-      @screen.scrollok(true)
-    end
 
     # Builds the curses menu
     #
