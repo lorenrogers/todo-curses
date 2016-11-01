@@ -10,8 +10,9 @@ A lot of the features are based on how
 handles things. I really liked the overall design of the application,
 just not the fact that it didn't run in my linux terminal. To solve
 this, I decided to roll my own using Ruby and Ncurses. There was already
-a robust library for handling todo.txt files, and Ncurses was something
-I'd been meaning to learn for a while.
+[a robust library for handling todo.txt files](
+https://github.com/samwho/todo-txt-gem),
+and Ncurses was something I'd been meaning to learn for a while.
 
 ![Gem Version](https://img.shields.io/gem/v/todo-curses.svg)
 ![Total Gem Downloads](https://img.shields.io/gem/dt/todo-curses.svg)
