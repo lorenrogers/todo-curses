@@ -17,7 +17,8 @@ duplicate effort on features.
 ## Setup
 
 To get started, fork the repo, have a look around, and run the
-standard `bundle` to install dependencies.
+standard `bundle` to install dependencies. You may need to
+install `libncursesw5-dev`, depending on your setup.
 
 Next, try building the gem:
 
